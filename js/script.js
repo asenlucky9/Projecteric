@@ -14,6 +14,7 @@ let colorClickCount = 0;
 let shapeClickCount = 0;
 let animalClickCount = 0;
 let wordClickCount = 0;
+let totalColorsInGame = 0;
 
 // Global variables for tracking achievements
 let achievements = {
@@ -32,7 +33,8 @@ let gameCompletions = {
     colors: 0,
     shapes: 0,
     animals: 0,
-    words: 0
+    words: 0,
+    people: 0
 };
 
 // Audio elements
@@ -99,6 +101,11 @@ const games = {
         title: "Eric's Word Builder",
         description: "Learn to read simple words! Click on the words.",
         words: ['CAT', 'DOG', 'SUN', 'HAT', 'BAG', 'CAR', 'BALL', 'BOOK', 'TREE', 'HOUSE', 'MAMA', 'DADA']
+    },
+    people: {
+        title: "Eric's People Friends",
+        description: "Learn about men, women, boys, and girls!",
+        people: ['👨', '👩', '👦', '👧']
     }
 };
 
@@ -118,6 +125,246 @@ const words = ['CAT', 'DOG', 'SUN', 'MOON', 'STAR', 'TREE', 'BOOK', 'BALL', 'CAK
 // Canvas context
 let canvas, ctx;
 
+// People identification game data
+const peopleData = [
+    {
+        type: 'man',
+        emoji: '👨',
+        word: 'Man',
+        description: 'This is a man. He is an adult male.',
+        examples: ['Daddy', 'Uncle', 'Grandpa', 'Teacher']
+    },
+    {
+        type: 'woman',
+        emoji: '👩',
+        word: 'Woman',
+        description: 'This is a woman. She is an adult female.',
+        examples: ['Mummy', 'Auntie', 'Grandma', 'Teacher']
+    },
+    {
+        type: 'boy',
+        emoji: '👦',
+        word: 'Boy',
+        description: 'This is a boy. He is a young male child.',
+        examples: ['Eric', 'Brother', 'Friend', 'Student']
+    },
+    {
+        type: 'girl',
+        emoji: '👧',
+        word: 'Girl',
+        description: 'This is a girl. She is a young female child.',
+        examples: ['Sister', 'Friend', 'Student', 'Cousin']
+    }
+];
+
+let currentPeopleIndex = 0;
+let peopleScore = 0;
+
+// Eric's birthday information
+const ericBirthday = {
+    day: 28,
+    month: 7, // July
+    year: 2021,
+    name: "Eric Uyiosa"
+};
+
+// Live birthday reminder system
+let birthdayReminderInterval;
+
+function startBirthdayReminder() {
+    // Clear any existing interval
+    if (birthdayReminderInterval) {
+        clearInterval(birthdayReminderInterval);
+    }
+    
+    // Update birthday reminder every minute
+    birthdayReminderInterval = setInterval(() => {
+        updateBirthdayReminder();
+    }, 60000); // Update every minute
+    
+    // Initial update
+    updateBirthdayReminder();
+}
+
+function updateBirthdayReminder() {
+    const today = new Date();
+    const currentMonth = today.getMonth() + 1;
+    const currentDay = today.getDate();
+    const currentYear = today.getFullYear();
+    
+    // Calculate next birthday
+    let nextBirthday = new Date(currentYear, ericBirthday.month - 1, ericBirthday.day);
+    
+    // If birthday has passed this year, calculate for next year
+    if (today > nextBirthday) {
+        nextBirthday = new Date(currentYear + 1, ericBirthday.month - 1, ericBirthday.day);
+    }
+    
+    const timeUntilBirthday = nextBirthday - today;
+    const daysUntilBirthday = Math.ceil(timeUntilBirthday / (1000 * 60 * 60 * 24));
+    const hoursUntilBirthday = Math.ceil((timeUntilBirthday % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    // Update birthday info display
+    const birthdayInfo = document.getElementById('birthday-info');
+    if (birthdayInfo) {
+        const birthdayText = birthdayInfo.querySelector('.birthday-text');
+        
+        if (currentMonth === ericBirthday.month && currentDay === ericBirthday.day) {
+            // It's Eric's birthday!
+            birthdayText.textContent = "🎂 Happy Birthday, Eric! You are 4 years old today! 🎂";
+            birthdayInfo.className = 'birthday-info birthday-today';
+            
+            // Show live birthday countdown
+            const now = new Date();
+            const birthdayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const birthdayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            const timeInBirthday = now - birthdayStart;
+            const totalBirthdayTime = birthdayEnd - birthdayStart;
+            const birthdayProgress = Math.floor((timeInBirthday / totalBirthdayTime) * 100);
+            
+            birthdayText.innerHTML = `🎂 Happy Birthday, Eric! You are 4 years old today! 🎂<br><small>Birthday Progress: ${birthdayProgress}% complete</small>`;
+            
+        } else if (daysUntilBirthday <= 7 && daysUntilBirthday > 0) {
+            // Birthday week countdown
+            birthdayText.innerHTML = `🎂 Eric's birthday is in ${daysUntilBirthday} days and ${hoursUntilBirthday} hours! 🎂<br><small>${Math.floor((7 - daysUntilBirthday) / 7 * 100)}% to birthday week!</small>`;
+            birthdayInfo.className = 'birthday-info birthday-week';
+            
+        } else if (currentMonth === ericBirthday.month) {
+            // Birthday month
+            birthdayText.innerHTML = `🎂 It's Eric's birthday month! July is special! 🎂<br><small>${daysUntilBirthday} days until birthday!</small>`;
+            birthdayInfo.className = 'birthday-info birthday-month';
+            
+        } else {
+            // Regular countdown
+            birthdayText.innerHTML = `🎂 Born: July 28, 2021 🎂<br><small>${daysUntilBirthday} days until next birthday!</small>`;
+            birthdayInfo.className = 'birthday-info';
+        }
+    }
+    
+    // Show special notifications for important milestones
+    if (daysUntilBirthday === 1 && hoursUntilBirthday <= 12) {
+        showNotification(`🎂 Eric's birthday is tomorrow! Get ready to celebrate! 🎉`);
+        speakText("Eric, your birthday is tomorrow! Get ready for a wonderful celebration!");
+    } else if (daysUntilBirthday === 7) {
+        showNotification(`🎂 Eric's birthday week starts today! 🎉`);
+        speakText("Eric, your birthday week starts today! It's going to be special!");
+    }
+}
+
+// Enhanced birthday check with live reminder
+function checkBirthday() {
+    const today = new Date();
+    const currentMonth = today.getMonth() + 1;
+    const currentDay = today.getDate();
+    
+    // Start live birthday reminder
+    startBirthdayReminder();
+    
+    // Check if it's Eric's birthday month (July)
+    if (currentMonth === ericBirthday.month) {
+        if (currentDay === ericBirthday.day) {
+            // It's Eric's birthday!
+            showBirthdayCelebration();
+            return 'birthday';
+        } else if (currentDay >= ericBirthday.day - 7 && currentDay <= ericBirthday.day + 7) {
+            // It's birthday week
+            showBirthdayCountdown();
+            return 'birthday-week';
+        } else {
+            // It's birthday month
+            showBirthdayMonth();
+            return 'birthday-month';
+        }
+    }
+    return 'normal';
+}
+
+// Show birthday celebration
+function showBirthdayCelebration() {
+    // Create birthday overlay
+    const birthdayOverlay = document.createElement('div');
+    birthdayOverlay.className = 'birthday-overlay';
+    birthdayOverlay.innerHTML = `
+        <div class="birthday-content">
+            <div class="birthday-cake">🎂</div>
+            <h1 class="birthday-title">Happy Birthday, Eric! 🎉</h1>
+            <p class="birthday-message">You are 4 years old today! 🎈</p>
+            <div class="birthday-balloons">
+                🎈🎈🎈🎈🎈🎈🎈🎈
+            </div>
+            <div class="birthday-gifts">
+                🎁🎁🎁🎁
+            </div>
+            <button class="birthday-button" onclick="startBirthdayParty()">
+                🎊 Start Birthday Party! 🎊
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(birthdayOverlay);
+    
+    // Play birthday music and sounds
+    playSound('complete');
+    playSound('baby_laugh');
+    speakText("Happy Birthday, Eric! You are 4 years old today! Let's celebrate!");
+    
+    // Trigger lots of confetti
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => triggerConfetti(), i * 200);
+    }
+}
+
+// Show birthday countdown
+function showBirthdayCountdown() {
+    const today = new Date();
+    const birthday = new Date(today.getFullYear(), ericBirthday.month - 1, ericBirthday.day);
+    const daysUntilBirthday = Math.ceil((birthday - today) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilBirthday > 0) {
+        showNotification(`🎂 Eric's birthday is in ${daysUntilBirthday} days! 🎉`);
+        speakText(`Eric, your birthday is coming soon! In ${daysUntilBirthday} days!`);
+    } else {
+        showNotification(`🎂 Eric's birthday was ${Math.abs(daysUntilBirthday)} days ago! 🎉`);
+        speakText(`Eric, we celebrated your birthday recently!`);
+    }
+}
+
+// Show birthday month celebration
+function showBirthdayMonth() {
+    showNotification(`🎂 It's Eric's birthday month! July is special! 🎉`);
+    speakText("Eric, it's your birthday month! July is special for you!");
+}
+
+// Start birthday party
+function startBirthdayParty() {
+    // Remove birthday overlay
+    const overlay = document.querySelector('.birthday-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+    
+    // Start special birthday activities
+    triggerConfetti();
+    playSound('complete');
+    playSound('baby_laugh');
+    
+    // Show birthday message
+    showNotification("🎊 Let's have a birthday party, Eric! 🎊");
+    speakText("Let's have a wonderful birthday party! You can play all your favorite games!");
+    
+    // Add extra points for birthday
+    addScore(100);
+    
+    // Unlock birthday achievement
+    unlockAchievement('birthday_2024', 'Birthday Boy! 🎂', 'Eric celebrated his 4th birthday!');
+    
+    // Show special birthday tip
+    setTimeout(() => {
+        showNotification("🎂 Happy 4th Birthday, Eric! You're growing so big and smart! 🎂");
+        speakText("Happy Birthday, Eric! You are four years old now! You're growing so big and smart!");
+    }, 2000);
+}
+
 // Initialize the application
 document.addEventListener("DOMContentLoaded", function() {
     setupEventListeners();
@@ -126,6 +373,10 @@ document.addEventListener("DOMContentLoaded", function() {
     setupAudio();
     setupSpeech();
     showWelcomeMessage();
+    
+    // Check for Eric's birthday and start live reminder
+    checkBirthday();
+    startBirthdayReminder();
     
     // Initialize writing section
     initWritingSection();
@@ -139,6 +390,10 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
+    
+    if (document.getElementById('storybook-container')) {
+        initializeStorybook();
+    }
 });
 
 // Setup speech synthesis with better voice selection
@@ -176,9 +431,8 @@ function setupSpeech() {
 }
 
 // Enhanced speak text function with better error handling
-function speakText(text, rate = 0.8, pitch = 1.2) {
+function speakText(text, rate = 0.8, pitch = 1.2, onWordBoundary) {
     if (speechSynthesis) {
-        // Stop any current speech
         speechSynthesis.cancel();
         
         const utterance = new SpeechSynthesisUtterance(text);
@@ -187,23 +441,28 @@ function speakText(text, rate = 0.8, pitch = 1.2) {
             utterance.voice = speakingVoice;
         }
         
-        utterance.rate = rate; // Slightly slower for children
-        utterance.pitch = pitch; // Slightly higher pitch for children
+        utterance.rate = rate;
+        utterance.pitch = pitch;
         utterance.volume = 0.9;
         utterance.lang = 'en-US';
         
-        // Add error handling
-        utterance.onerror = function(event) {
-            console.log('Speech error:', event.error);
+        utterance.onboundary = (event) => {
+            if (event.name === 'word' && onWordBoundary) {
+                const word = text.substring(event.charIndex, text.indexOf(' ', event.charIndex));
+                onWordBoundary(word);
+            }
+        };
+
+        utterance.onend = () => {
+            // Reset text when speech is finished
+            const textElement = document.getElementById(`story-text-${currentPage}`);
+            if(textElement) textElement.innerHTML = stories.spaceAdventure.pages[currentPage].text;
         };
         
-        utterance.onend = function() {
-            console.log('Speech finished:', text);
-        };
+        utterance.onerror = (event) => console.log('Speech error:', event.error);
         
         try {
             speechSynthesis.speak(utterance);
-            console.log('Speaking:', text);
         } catch (error) {
             console.log('Speech synthesis error:', error);
         }
@@ -487,17 +746,19 @@ function showWelcomeMessage() {
 // Setup event listeners
 function setupEventListeners() {
     // Navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('.nav-link').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             playSound('click');
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
+            const sectionId = this.getAttribute('href').substring(1);
+            showSection(sectionId);
         });
+    });
+
+    // When the logo is clicked, show the main page and scroll to top
+    document.querySelector('.logo-container a').addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('hero'); // 'hero' will trigger the main view and scroll to top
     });
 
     // Active navigation highlighting
@@ -672,13 +933,13 @@ function startGame() {
 // Play specific game
 function playGame(gameType) {
     currentGame = gameType;
-    const game = games[gameType];
-    
-    document.getElementById("game-title").textContent = game.title;
+    document.getElementById("game-title").textContent = games[gameType].title;
     document.getElementById("game-modal").style.display = "block";
     
     const gameArea = document.getElementById("game-area");
-    gameArea.innerHTML = "";
+    
+    // Check if it's Eric's birthday month and playing colors
+    const isBirthdayMonth = checkBirthday() === 'birthday-month' || checkBirthday() === 'birthday-week' || checkBirthday() === 'birthday';
     
     switch(gameType) {
         case 'alphabet':
@@ -688,7 +949,11 @@ function playGame(gameType) {
             createNumberGame(gameArea);
             break;
         case 'colors':
-            createColorGame(gameArea);
+            if (isBirthdayMonth) {
+                createBirthdayColorGame(gameArea);
+            } else {
+                createColorGame(gameArea);
+            }
             break;
         case 'shapes':
             createShapeGame(gameArea);
@@ -699,28 +964,18 @@ function playGame(gameType) {
         case 'words':
             createWordGame(gameArea);
             break;
+        case 'people':
+            showPeopleGame();
+            return; // Don't continue with normal game setup
+        default:
+            gameArea.innerHTML = '<p>Game not found!</p>';
     }
     
-    playSound('click');
-    playSound('baby_coo');
-    speakText(`Let's play the ${gameType} game!`);
-    
-    // Show game-specific educational tip
-    setTimeout(() => {
-        const gameTips = {
-            'alphabet': "Letters make words, and words make stories! Keep learning, Eric!",
-            'numbers': "Numbers help us count everything! You're doing great, Eric!",
-            'colors': "Colors make our world beautiful! What's your favorite color, Eric?",
-            'shapes': "Shapes are everywhere! Look for circles, squares, and triangles!",
-            'animals': "Animals are amazing! Each one is special and unique!",
-            'words': "Reading words is like solving a puzzle! You're getting so good at it!"
-        };
-        
-        if (gameTips[gameType]) {
-            speakText(gameTips[gameType]);
-            showNotification(gameTips[gameType]);
-        }
-    }, 2000);
+    // Reset click counters
+    colorClickCount = 0;
+    shapeClickCount = 0;
+    animalClickCount = 0;
+    wordClickCount = 0;
 }
 
 // Create alphabet learning game
@@ -779,24 +1034,120 @@ function createNumberGame(gameArea) {
 
 // Create color learning game
 function createColorGame(gameArea) {
-    const shuffledColors = [...games.colors.colors].sort(() => Math.random() - 0.5);
-    const selectedColors = shuffledColors.slice(0, 6);
+    // Use all colors and shuffle them
+    const allColors = [...games.colors.colors].sort(() => Math.random() - 0.5);
     
     gameArea.innerHTML = `
         <div class="game-instructions">
-            <h4>Eric, learn the colors! Click on the colors! 🎨</h4>
+            <h4 class="game-title-pro">Eric, can you find the colors? 🎨</h4>
+            <p class="game-subtitle-pro">Click on a color to hear its name!</p>
         </div>
-        <div class="game-grid">
-            ${selectedColors.map(colorObj => `
-                <div class="game-item color-item" 
-                     style="background-color: ${colorObj.color}" 
-                     onclick="learnColor('${colorObj.name}', '${colorObj.color}')"
-                     title="${colorObj.name}">
+        <div class="game-grid color-grid-pro">
+            ${allColors.map(colorObj => `
+                <div class="game-item-pro color-item-pro" 
+                     onclick="learnColor(this, '${colorObj.name}', '${colorObj.color}')"
+                     title="Click to learn this color"
+                     data-color-name="${colorObj.name}">
+                     <div class="color-swatch-pro" style="background-color: ${colorObj.color};"></div>
+                     <span class="color-name-pro">${colorObj.name}</span>
                 </div>
             `).join('')}
         </div>
     `;
-    speakText("Click on the colors to learn their names!");
+    speakText("Eric, let's learn the colors! Click on a color to hear its name!");
+    
+    // Reset the click counter
+    colorClickCount = 0;
+    // Set the total number of colors for completion check
+    totalColorsInGame = allColors.length;
+}
+
+// Learn color function
+function learnColor(element, colorName, colorValue) {
+    addScore(10);
+    playSound('color');
+    playSound('baby_coo');
+    speakText(`This is ${colorName}`);
+    showNotification(`Great job, Eric! This is ${colorName}! 🎨`);
+
+    // Add an animation to the clicked card
+    element.classList.add('clicked');
+    setTimeout(() => {
+        element.classList.remove('clicked');
+    }, 1000);
+    
+    colorClickCount++;
+    if (colorClickCount >= totalColorsInGame) {
+        setTimeout(() => {
+            playSound('baby_laugh');
+            speakText("Wow, Eric! You found all the colors! You are so smart!");
+            showNotification("Wow! You learned all the colors! 🎉");
+            colorClickCount = 0;
+            triggerConfetti();
+        }, 1000);
+    }
+}
+
+// Create special birthday color game
+function createBirthdayColorGame(gameArea) {
+    // This will now also use the professional style
+    const birthdayColors = [
+        { name: 'Sparkle Pink', color: '#ff6b9d' },
+        { name: 'Royal Purple', color: '#667eea' },
+        { name: 'Gleaming Gold', color: '#ffd700' },
+        { name: 'Sky Blue', color: '#4ecdc4' },
+        { name: 'Cherry Red', color: '#ff4757' },
+        { name: 'Sunny Yellow', color: '#ffa502' }
+    ];
+    
+    gameArea.innerHTML = `
+        <div class="game-instructions">
+            <h4 class="game-title-pro">🎂 Eric's Birthday Colors! 🎨</h4>
+            <p class="game-subtitle-pro">Click on the special birthday colors!</p>
+        </div>
+        <div class="game-grid color-grid-pro birthday-colors">
+            ${birthdayColors.map(colorObj => `
+                <div class="game-item-pro color-item-pro birthday-color" 
+                     onclick="learnBirthdayColor(this, '${colorObj.name}', '${colorObj.color}')"
+                     title="Click to learn this birthday color"
+                     data-color-name="${colorObj.name}">
+                     <div class="color-swatch-pro" style="background-color: ${colorObj.color};"></div>
+                     <span class="color-name-pro">${colorObj.name}</span>
+                    <div class="birthday-sparkle">✨</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    speakText("Happy Birthday, Eric! Let's learn these special birthday colors!");
+    
+    colorClickCount = 0;
+    totalColorsInGame = birthdayColors.length;
+}
+
+// Learn birthday color function
+function learnBirthdayColor(element, colorName, colorValue) {
+    addScore(15); // Extra points for birthday
+    playSound('color');
+    playSound('baby_laugh');
+    speakText(`${colorName}, what a beautiful birthday color!`);
+    showNotification(`🎂 ${colorName}! Happy Birthday, Eric! 🎨`);
+    
+    // Add an animation to the clicked card
+    element.classList.add('clicked');
+    setTimeout(() => {
+        element.classList.remove('clicked');
+    }, 1000);
+    
+    colorClickCount++;
+    if (colorClickCount >= totalColorsInGame) {
+        setTimeout(() => {
+            playSound('baby_laugh');
+            speakText("Happy Birthday, Eric! You learned all the special colors!");
+            showNotification("🎂 Happy Birthday! You're a color master! 🎨");
+            colorClickCount = 0;
+            triggerConfetti();
+        }, 1000);
+    }
 }
 
 // Create shape learning game
@@ -859,6 +1210,125 @@ function createWordGame(gameArea) {
     speakText("Click on the words to learn how to read them!");
 }
 
+// Create people identification game
+function showPeopleGame() {
+    currentPeopleIndex = 0;
+    peopleScore = 0;
+    
+    document.getElementById("game-title").textContent = "People Friends";
+    document.getElementById("game-modal").style.display = "block";
+    
+    const gameArea = document.getElementById("game-area");
+    gameArea.innerHTML = `
+        <div class="game-instructions">
+            <h4>Eric, learn about people! Click on the people to learn! 👥</h4>
+        </div>
+        <div class="people-game-container">
+            <div class="people-display">
+                <div class="people-emoji" id="people-emoji">👨</div>
+                <div class="people-word" id="people-word">Man</div>
+                <div class="people-description" id="people-description">This is a man. He is an adult male.</div>
+            </div>
+            <div class="people-examples">
+                <h5>Examples:</h5>
+                <div class="examples-list" id="examples-list">
+                    <span class="example-item">Daddy</span>
+                    <span class="example-item">Uncle</span>
+                    <span class="example-item">Grandpa</span>
+                    <span class="example-item">Teacher</span>
+                </div>
+            </div>
+            <div class="people-navigation">
+                <button class="nav-btn prev-btn" onclick="previousPeople()" disabled>
+                    <span>⬅️ Previous</span>
+                </button>
+                <button class="nav-btn next-btn" onclick="nextPeople()">
+                    <span>Next ➡️</span>
+                </button>
+            </div>
+            <div class="people-progress">
+                <span id="people-progress">1 of 4</span>
+            </div>
+        </div>
+    `;
+    
+    updatePeopleDisplay();
+    speakText("Let's learn about people! This is a man.");
+}
+
+// Update people display
+function updatePeopleDisplay() {
+    const currentPerson = peopleData[currentPeopleIndex];
+    
+    document.getElementById('people-emoji').textContent = currentPerson.emoji;
+    document.getElementById('people-word').textContent = currentPerson.word;
+    document.getElementById('people-description').textContent = currentPerson.description;
+    
+    const examplesList = document.getElementById('examples-list');
+    examplesList.innerHTML = currentPerson.examples.map(example => 
+        `<span class="example-item">${example}</span>`
+    ).join('');
+    
+    document.getElementById('people-progress').textContent = `${currentPeopleIndex + 1} of ${peopleData.length}`;
+    
+    // Update navigation buttons
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    
+    prevBtn.disabled = currentPeopleIndex === 0;
+    nextBtn.disabled = currentPeopleIndex === peopleData.length - 1;
+    
+    // Special message for Eric
+    if (currentPerson.type === 'boy') {
+        document.getElementById('people-description').textContent = 
+            "This is a boy. He is a young male child. Just like you, Eric!";
+    }
+    
+    // Special message for Mummy
+    if (currentPerson.type === 'woman') {
+        document.getElementById('people-description').textContent = 
+            "This is a woman. She is an adult female. Like your Mummy T & E!";
+    }
+}
+
+// Navigate to previous person
+function previousPeople() {
+    if (currentPeopleIndex > 0) {
+        currentPeopleIndex--;
+        updatePeopleDisplay();
+        addScore(5);
+        playSound('baby_coo');
+        speakText(peopleData[currentPeopleIndex].description);
+    }
+}
+
+// Navigate to next person
+function nextPeople() {
+    if (currentPeopleIndex < peopleData.length - 1) {
+        currentPeopleIndex++;
+        updatePeopleDisplay();
+        addScore(5);
+        playSound('baby_giggle');
+        speakText(peopleData[currentPeopleIndex].description);
+    } else {
+        // Game completed
+        addScore(20);
+        playSound('complete');
+        playSound('baby_laugh');
+        speakText("Great job learning about people, Eric! You know about men, women, boys, and girls!");
+        showNotification("Excellent! You've learned about all the people!");
+        triggerConfetti();
+        
+        // Update game completion
+        updateGameCompletion('people');
+        
+        // Close game after celebration
+        setTimeout(() => {
+            closeGame();
+        }, 3000);
+    }
+}
+
 // Game interaction functions
 function checkAlphabetOrder(letter) {
     const expectedLetter = window.selectedLetters[window.currentAlphabetIndex];
@@ -907,24 +1377,6 @@ function checkNumberOrder(number) {
         playSound('error');
         speakText(`Try again! Look for number ${expectedNumber}`);
         showNotification(`Try again, Eric! Look for ${expectedNumber}! 💪`);
-    }
-}
-
-function learnColor(colorName, colorValue) {
-    addScore(10);
-    playSound('color');
-    playSound('baby_coo');
-    speakText(`This is ${colorName}`);
-    showNotification(`Great job, Eric! This is ${colorName}! 🎨`);
-    
-    colorClickCount++;
-    if (colorClickCount >= 6) { // Assuming 6 colors per game
-        setTimeout(() => {
-            playSound('baby_laugh');
-            speakText("Thank you Eric, you are doing well! You learned all the colors!");
-            showNotification("Thank you Eric, you are doing well! 🎨");
-            colorClickCount = 0;
-        }, 1000);
     }
 }
 
@@ -1926,3 +2378,130 @@ const writingSuccessCSS = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = writingSuccessCSS;
 document.head.appendChild(styleSheet);
+
+// Story Time Feature
+const stories = {
+    spaceAdventure: {
+        title: "Eric's Space Adventure",
+        pages: [
+            {
+                image: "🚀",
+                text: "Once upon a time, a brave explorer named Eric got into his super rocket ship."
+            },
+            {
+                image: "✨",
+                text: "He blasted off into space, zooming past twinkling stars and colorful planets."
+            },
+            {
+                image: "🌕",
+                text: "Eric landed on the moon! He bounced up and down, laughing in his space suit."
+            },
+            {
+                image: "👽",
+                text: "A friendly, green alien waved at him. 'Welcome to space, Eric!' it beeped."
+            },
+            {
+                image: "🌍",
+                text: "After a day of adventure, Eric flew back home, excited to tell Mummy T & E all about it."
+            }
+        ]
+    }
+};
+
+let currentPage = 0;
+const storybook = document.getElementById('storybook');
+const prevPageButton = document.getElementById('prev-page');
+const nextPageButton = document.getElementById('next-page');
+const readAloudButton = document.getElementById('read-aloud');
+
+function initializeStorybook() {
+    const story = stories.spaceAdventure;
+    storybook.innerHTML = ''; // Clear previous pages
+    story.pages.forEach((page, index) => {
+        const pageElement = document.createElement('div');
+        pageElement.classList.add('story-page');
+        if (index === 0) pageElement.classList.add('active');
+        
+        pageElement.innerHTML = `
+            <div class="story-emoji">${page.image}</div>
+            <p class="story-text" id="story-text-${index}">${page.text}</p>
+        `;
+        storybook.appendChild(pageElement);
+    });
+    updateStoryNav();
+}
+
+function updateStoryNav() {
+    const totalPages = stories.spaceAdventure.pages.length;
+    prevPageButton.disabled = currentPage === 0;
+    nextPageButton.disabled = currentPage === totalPages - 1;
+}
+
+function showPage(pageNumber) {
+    const pages = document.querySelectorAll('.story-page');
+    pages.forEach(page => page.classList.remove('active'));
+    pages[pageNumber].classList.add('active');
+    currentPage = pageNumber;
+    updateStoryNav();
+}
+
+function readCurrentPage() {
+    const pageText = stories.spaceAdventure.pages[currentPage].text;
+    const textElement = document.getElementById(`story-text-${currentPage}`);
+    
+    speakText(pageText, 0.9, 1.1, (word) => {
+        // This is a new callback for highlighting words
+        if (textElement) {
+            let html = pageText;
+            const regex = new RegExp(`\\b(${word})\\b`, 'gi');
+            html = html.replace(regex, '<span class="highlight">$&</span>');
+            textElement.innerHTML = html;
+        }
+    });
+}
+
+// Event Listeners for Storybook
+if(prevPageButton) {
+    prevPageButton.addEventListener('click', () => {
+        if (currentPage > 0) {
+            showPage(currentPage - 1);
+        }
+    });
+}
+
+if(nextPageButton) {
+    nextPageButton.addEventListener('click', () => {
+        const totalPages = stories.spaceAdventure.pages.length;
+        if (currentPage < totalPages - 1) {
+            showPage(currentPage + 1);
+        }
+    });
+}
+
+if(readAloudButton) {
+    readAloudButton.addEventListener('click', readCurrentPage);
+}
+
+// A new function to handle showing and hiding sections
+function showSection(sectionId) {
+    const mainContent = document.getElementById('main-content');
+    const storyTimeSection = document.getElementById('story-time');
+
+    // If the link is for the story, show the story section and hide main content.
+    if (sectionId === 'story-time') {
+        mainContent.style.display = 'none';
+        storyTimeSection.style.display = 'block';
+        initializeStorybook(); // Make sure the story is ready
+    } 
+    // For any other link, show the main content and hide the story.
+    else {
+        mainContent.style.display = 'block';
+        storyTimeSection.style.display = 'none';
+        
+        // Then, scroll to the correct anchor within the main content.
+        const targetElement = document.getElementById(sectionId);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+}

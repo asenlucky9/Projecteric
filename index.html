@@ -70,6 +70,7 @@
                 <a href="#writing" class="nav-link">✍️ Writing</a>
                 <a href="#play" class="nav-link">🎨 Play</a>
                 <a href="#achievements" class="nav-link">🏆 Achievements</a>
+                <a href="#story-time" class="nav-link">Story Time</a>
             </div>
             <div class="nav-controls">
                 <div class="nav-score">
@@ -83,416 +84,453 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-background">
-            <img src="images/hero-bg.svg" alt="Learning Background" class="hero-bg-image">
-        </div>
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">
-                    <span class="title-icon">🌟</span>
-                    Welcome Eric Uyiosa!
-                    <span class="title-icon">🌟</span>
-                </h1>
-                <p class="hero-subtitle">Mummy T & E loves you! Let's learn and have fun together!</p>
-                <div class="hero-features">
-                    <div class="feature-item">
-                        <span class="feature-icon">🎨</span>
-                        <span class="feature-text">Learn Colors</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🔢</span>
-                        <span class="feature-text">Count Numbers</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🔤</span>
-                        <span class="feature-text">ABC Letters</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">⭐</span>
-                        <span class="feature-text">Fun Shapes</span>
-                    </div>
-                </div>
-                <button class="cta-button" onclick="startGame()">
-                    <span class="button-icon">🚀</span>
-                    Start Learning Adventure!
-                    <span class="button-icon">🚀</span>
-                </button>
-            </div>
-            <div class="hero-characters">
-                <div class="character character-1">🐶</div>
-                <div class="character character-2">🐱</div>
-                <div class="character character-3">🐮</div>
-                <div class="character character-4">🐷</div>
-                <div class="character character-5">🐸</div>
-                <div class="character character-6">🦆</div>
-                <div class="surprise-box" onclick="openSurpriseBox()">
-                    <span class="surprise-icon">🎁</span>
-                    <span class="surprise-text">Surprise!</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Fun Zone Section -->
-    <section id="fun-zone" class="fun-zone">
-        <div class="section-header">
-            <h2 class="section-title">
-                <span class="title-icon">🎪</span>
-                Eric's Fun Zone
-                <span class="title-icon">🎪</span>
-            </h2>
-            <p class="section-subtitle">Extra fun activities just for you, Eric!</p>
-        </div>
-        <div class="fun-activities">
-            <div class="activity-card" onclick="playDrum()">
-                <div class="activity-icon">🥁</div>
-                <h3>Play Drums</h3>
-                <p>Make music with Eric!</p>
-            </div>
-            <div class="activity-card" onclick="makeRainbow()">
-                <div class="activity-icon">🌈</div>
-                <h3>Rainbow Maker</h3>
-                <p>Create beautiful rainbows!</p>
-            </div>
-            <div class="activity-card" onclick="popBalloons()">
-                <div class="activity-icon">🎈</div>
-                <h3>Balloon Popper</h3>
-                <p>Pop colorful balloons!</p>
-            </div>
-            <div class="activity-card" onclick="danceParty()">
-                <div class="activity-icon">💃</div>
-                <h3>Dance Party</h3>
-                <p>Let's dance together!</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Games Section -->
-    <section id="games" class="games">
-        <div class="section-header">
-            <h2 class="section-title">
-                <span class="title-icon">🎮</span>
-                Eric's Learning Games
-                <span class="title-icon">🎮</span>
-            </h2>
-            <p class="section-subtitle">Choose a game and start learning with fun!</p>
-        </div>
-        <div class="games-grid">
-            <div class="game-card" onclick="playGame('alphabet')">
-                <div class="game-icon">🔤</div>
-                <h3 class="game-title">Alphabet Fun</h3>
-                <p class="game-description">Learn your ABCs with Eric!</p>
-                <div class="game-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text">0% Complete</span>
-                </div>
-            </div>
-            <div class="game-card" onclick="playGame('numbers')">
-                <div class="game-icon">🔢</div>
-                <h3 class="game-title">Number Counting</h3>
-                <p class="game-description">Count from 1 to 20!</p>
-                <div class="game-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text">0% Complete</span>
-                </div>
-            </div>
-            <div class="game-card" onclick="playGame('colors')">
-                <div class="game-icon">🎨</div>
-                <h3 class="game-title">Color Learning</h3>
-                <p class="game-description">Discover beautiful colors!</p>
-                <div class="game-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text">0% Complete</span>
-                </div>
-            </div>
-            <div class="game-card" onclick="playGame('shapes')">
-                <div class="game-icon">⭐</div>
-                <h3 class="game-title">Shape Explorer</h3>
-                <p class="game-description">Find different shapes!</p>
-                <div class="game-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text">0% Complete</span>
-                </div>
-            </div>
-            <div class="game-card" onclick="playGame('animals')">
-                <div class="game-icon">🐾</div>
-                <h3 class="game-title">Animal Friends</h3>
-                <p class="game-description">Meet friendly animals!</p>
-                <div class="game-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text">0% Complete</span>
-                </div>
-            </div>
-            <div class="game-card" onclick="playGame('words')">
-                <div class="game-icon">📚</div>
-                <h3 class="game-title">Word Builder</h3>
-                <p class="game-description">Learn to read words!</p>
-                <div class="game-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span class="progress-text">0% Complete</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Learning Section -->
-    <section id="learning" class="learning">
-        <div class="section-header">
-            <h2 class="section-title">
-                <span class="title-icon">📚</span>
-                Eric's Learning Corner
-                <span class="title-icon">📚</span>
-            </h2>
-            <p class="section-subtitle">Learn new things every day!</p>
-        </div>
-        <div class="learning-container">
-            <div class="learning-card">
-                <div class="learning-emoji" id="learning-emoji">🐶</div>
-                <h3 class="learning-title" id="learning-title">Dog</h3>
-                <p class="learning-description" id="learning-description">Woof! This is a friendly dog! Dogs are loyal pets.</p>
-                <button class="learning-button" onclick="nextLearning()">
-                    <span class="button-icon">➡️</span>
-                    Learn More
-                    <span class="button-icon">➡️</span>
-                </button>
-            </div>
-            <div class="learning-tips">
-                <h4 class="tips-title">💡 Learning Tips for Eric:</h4>
-                <ul class="tips-list">
-                    <li>🎯 Take your time and enjoy learning</li>
-                    <li>🎨 Try different games to learn new things</li>
-                    <li>🌟 Practice makes perfect!</li>
-                    <li>🎵 Listen carefully to the sounds</li>
-                    <li>👀 Look at the pictures and colors</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Writing Section -->
-    <section id="writing" class="writing">
-        <div class="section-header">
-            <h2 class="section-title">
-                <span class="title-icon">✍️</span>
-                Eric's Writing Practice
-                <span class="title-icon">✍️</span>
-            </h2>
-            <p class="section-subtitle">Learn to write letters, numbers, and words!</p>
-        </div>
-        <div class="writing-container">
-            <div class="writing-controls">
-                <div class="writing-mode-selector">
-                    <button class="mode-button active" onclick="setWritingMode('letters')" data-mode="letters">
-                        <span class="mode-icon">🔤</span>
-                        Letters
-                    </button>
-                    <button class="mode-button" onclick="setWritingMode('numbers')" data-mode="numbers">
-                        <span class="mode-icon">🔢</span>
-                        Numbers
-                    </button>
-                    <button class="mode-button" onclick="setWritingMode('words')" data-mode="words">
-                        <span class="mode-icon">📝</span>
-                        Words
-                    </button>
-                </div>
-                <div class="writing-tools">
-                    <button class="tool-button" onclick="clearCanvas()" title="Clear">
-                        <span class="tool-icon">🧹</span>
-                        Clear
-                    </button>
-                    <button class="tool-button" onclick="undoStroke()" title="Undo">
-                        <span class="tool-icon">↶</span>
-                        Undo
-                    </button>
-                    <button class="tool-button" onclick="toggleEraser()" title="Eraser">
-                        <span class="tool-icon">⌫</span>
-                        Eraser
-                    </button>
-                </div>
-            </div>
+    <!-- Story Time Section (now outside main-content) -->
+    <section id="story-time" class="story-time-section" style="display:none;">
+        <div class="container">
+            <h2 class="section-title">Eric's Story Time 📖</h2>
+            <p class="section-subtitle">Let's go on an adventure! Click the arrows to turn the page.</p>
             
-            <div class="writing-area">
-                <div class="writing-practice">
-                    <div class="practice-header">
-                        <h3 id="practice-title">Write the Letter: A</h3>
-                        <div class="practice-progress">
-                            <span id="practice-progress">0/26</span>
+            <div id="storybook-container" class="storybook-container">
+                <div id="storybook" class="storybook">
+                    <!-- Story pages will be injected here by JavaScript -->
+                </div>
+                <div class="storybook-nav">
+                    <button id="prev-page" class="nav-arrow" title="Previous Page">◀</button>
+                    <button id="read-aloud" class="read-aloud-button" title="Read Page Aloud">🔊 Read Page</button>
+                    <button id="next-page" class="nav-arrow" title="Next Page">▶</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content of the page -->
+    <div id="main-content">
+        <section id="hero" class="hero-section">
+            <div class="container">
+                <div class="hero-background">
+                    <img src="images/hero-bg.svg" alt="Learning Background" class="hero-bg-image">
+                </div>
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            <span class="title-icon">🌟</span>
+                            Welcome Eric Uyiosa!
+                            <span class="title-icon">🌟</span>
+                        </h1>
+                        <p class="hero-subtitle">Mummy T & E loves you very much! Let's learn and have fun together!</p>
+                        <div class="birthday-info" id="birthday-info">
+                            <span class="birthday-text">🎂 Born: July 28, 2021 🎂</span>
+                        </div>
+                        <div class="hero-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🎨</span>
+                                <span class="feature-text">Learn Colors</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔢</span>
+                                <span class="feature-text">Count Numbers</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔤</span>
+                                <span class="feature-text">ABC Letters</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">⭐</span>
+                                <span class="feature-text">Fun Shapes</span>
+                            </div>
+                        </div>
+                        <button class="cta-button" onclick="startGame()">
+                            <span class="button-icon">🚀</span>
+                            Start Learning Adventure!
+                            <span class="button-icon">🚀</span>
+                        </button>
+                    </div>
+                    <div class="hero-characters">
+                        <div class="character character-1">🐶</div>
+                        <div class="character character-2">🐱</div>
+                        <div class="character character-3">🐮</div>
+                        <div class="character character-4">🐷</div>
+                        <div class="character character-5">🐸</div>
+                        <div class="character character-6">🦆</div>
+                        <div class="surprise-box" onclick="openSurpriseBox()">
+                            <span class="surprise-icon">🎁</span>
+                            <span class="surprise-text">Surprise!</span>
                         </div>
                     </div>
-                    
-                    <div class="writing-canvas-container">
-                        <canvas id="writing-canvas" width="400" height="300"></canvas>
-                        <div class="canvas-overlay">
-                            <div class="trace-guide" id="trace-guide">
-                                <div class="letter-guide" id="letter-guide">A</div>
-                                <div class="arrow-guide">↓</div>
-                                <div class="instruction-text">Trace the letter here!</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fun Zone Section -->
+        <section id="fun-zone" class="fun-zone">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">🎪</span>
+                    Eric's Fun Zone
+                    <span class="title-icon">🎪</span>
+                </h2>
+                <p class="section-subtitle">Extra fun activities just for you, Eric!</p>
+            </div>
+            <div class="fun-activities">
+                <div class="activity-card" onclick="playDrum()">
+                    <div class="activity-icon">🥁</div>
+                    <h3>Play Drums</h3>
+                    <p>Make music with Eric!</p>
+                </div>
+                <div class="activity-card" onclick="makeRainbow()">
+                    <div class="activity-icon">🌈</div>
+                    <h3>Rainbow Maker</h3>
+                    <p>Create beautiful rainbows!</p>
+                </div>
+                <div class="activity-card" onclick="popBalloons()">
+                    <div class="activity-icon">🎈</div>
+                    <h3>Balloon Popper</h3>
+                    <p>Pop colorful balloons!</p>
+                </div>
+                <div class="activity-card" onclick="danceParty()">
+                    <div class="activity-icon">💃</div>
+                    <h3>Dance Party</h3>
+                    <p>Let's dance together!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Section -->
+        <section id="games" class="games">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">🎮</span>
+                    Eric's Learning Games
+                    <span class="title-icon">🎮</span>
+                </h2>
+                <p class="section-subtitle">Choose a game and start learning with fun!</p>
+            </div>
+            <div class="games-grid">
+                <div class="game-card" onclick="playGame('alphabet')">
+                    <div class="game-icon">🔤</div>
+                    <h3 class="game-title">Alphabet Fun</h3>
+                    <p class="game-description">Learn your ABCs with Eric!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="playGame('numbers')">
+                    <div class="game-icon">🔢</div>
+                    <h3 class="game-title">Number Counting</h3>
+                    <p class="game-description">Count from 1 to 20!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="playGame('colors')">
+                    <div class="game-icon">🎨</div>
+                    <h3 class="game-title">Color Learning</h3>
+                    <p class="game-description">Discover beautiful colors!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="playGame('shapes')">
+                    <div class="game-icon">⭐</div>
+                    <h3 class="game-title">Shape Explorer</h3>
+                    <p class="game-description">Find different shapes!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="playGame('animals')">
+                    <div class="game-icon">🐾</div>
+                    <h3 class="game-title">Animal Friends</h3>
+                    <p class="game-description">Meet friendly animals!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="playGame('words')">
+                    <div class="game-icon">📚</div>
+                    <h3 class="game-title">Word Builder</h3>
+                    <p class="game-description">Learn to read words!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+                <div class="game-card" onclick="playGame('people')">
+                    <div class="game-icon">👥</div>
+                    <h3 class="game-title">People Friends</h3>
+                    <p class="game-description">Learn about men, women, girls, and boys!</p>
+                    <div class="game-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0% Complete</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Section -->
+        <section id="learning" class="learning">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">📚</span>
+                    Eric's Learning Corner
+                    <span class="title-icon">📚</span>
+                </h2>
+                <p class="section-subtitle">Learn new things every day!</p>
+            </div>
+            <div class="learning-container">
+                <div class="learning-card">
+                    <div class="learning-emoji" id="learning-emoji">🐶</div>
+                    <h3 class="learning-title" id="learning-title">Dog</h3>
+                    <p class="learning-description" id="learning-description">Woof! This is a friendly dog! Dogs are loyal pets.</p>
+                    <button class="learning-button" onclick="nextLearning()">
+                        <span class="button-icon">➡️</span>
+                        Learn More
+                        <span class="button-icon">➡️</span>
+                    </button>
+                </div>
+                <div class="learning-tips">
+                    <h4 class="tips-title">💡 Learning Tips for Eric:</h4>
+                    <ul class="tips-list">
+                        <li>🎯 Take your time and enjoy learning</li>
+                        <li>🎨 Try different games to learn new things</li>
+                        <li>🌟 Practice makes perfect!</li>
+                        <li>🎵 Listen carefully to the sounds</li>
+                        <li>👀 Look at the pictures and colors</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Writing Section -->
+        <section id="writing" class="writing">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">✍️</span>
+                    Eric's Writing Practice
+                    <span class="title-icon">✍️</span>
+                </h2>
+                <p class="section-subtitle">Learn to write letters, numbers, and words!</p>
+            </div>
+            <div class="writing-container">
+                <div class="writing-controls">
+                    <div class="writing-mode-selector">
+                        <button class="mode-button active" onclick="setWritingMode('letters')" data-mode="letters">
+                            <span class="mode-icon">🔤</span>
+                            Letters
+                        </button>
+                        <button class="mode-button" onclick="setWritingMode('numbers')" data-mode="numbers">
+                            <span class="mode-icon">🔢</span>
+                            Numbers
+                        </button>
+                        <button class="mode-button" onclick="setWritingMode('words')" data-mode="words">
+                            <span class="mode-icon">📝</span>
+                            Words
+                        </button>
+                    </div>
+                    <div class="writing-tools">
+                        <button class="tool-button" onclick="clearCanvas()" title="Clear">
+                            <span class="tool-icon">🧹</span>
+                            Clear
+                        </button>
+                        <button class="tool-button" onclick="undoStroke()" title="Undo">
+                            <span class="tool-icon">↶</span>
+                            Undo
+                        </button>
+                        <button class="tool-button" onclick="toggleEraser()" title="Eraser">
+                            <span class="tool-icon">⌫</span>
+                            Eraser
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="writing-area">
+                    <div class="writing-practice">
+                        <div class="practice-header">
+                            <h3 id="practice-title">Write the Letter: A</h3>
+                            <div class="practice-progress">
+                                <span id="practice-progress">0/26</span>
+                            </div>
+                        </div>
+                        
+                        <div class="writing-canvas-container">
+                            <canvas id="writing-canvas" width="400" height="300"></canvas>
+                            <div class="canvas-overlay">
+                                <div class="trace-guide" id="trace-guide">
+                                    <div class="letter-guide" id="letter-guide">A</div>
+                                    <div class="arrow-guide">↓</div>
+                                    <div class="instruction-text">Trace the letter here!</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="writing-instructions">
+                            <div class="instruction-step">
+                                <span class="step-number">1</span>
+                                <span class="step-text">Look at the letter above</span>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">2</span>
+                                <span class="step-text">Trace it with your finger or mouse</span>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">3</span>
+                                <span class="step-text">Try to write it by yourself!</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="writing-instructions">
-                        <div class="instruction-step">
-                            <span class="step-number">1</span>
-                            <span class="step-text">Look at the letter above</span>
+                    <div class="writing-sidebar">
+                        <div class="writing-examples">
+                            <h4 class="examples-title">Writing Examples</h4>
+                            <div class="example-grid" id="example-grid">
+                                <!-- Examples will be loaded here -->
+                            </div>
                         </div>
-                        <div class="instruction-step">
-                            <span class="step-number">2</span>
-                            <span class="step-text">Trace it with your finger or mouse</span>
+                        
+                        <div class="writing-tips">
+                            <h4 class="tips-title">💡 Writing Tips for Eric:</h4>
+                            <ul class="writing-tips-list">
+                                <li>✏️ Hold your pencil correctly</li>
+                                <li>👆 Start from the top</li>
+                                <li>🔄 Follow the arrows</li>
+                                <li>🎯 Take your time</li>
+                                <li>🌟 Practice makes perfect!</li>
+                            </ul>
                         </div>
-                        <div class="instruction-step">
-                            <span class="step-number">3</span>
-                            <span class="step-text">Try to write it by yourself!</span>
+                        
+                        <div class="writing-achievements">
+                            <h4 class="achievements-title">Writing Achievements</h4>
+                            <div class="writing-achievement" id="first-letter">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-text">First Letter</span>
+                            </div>
+                            <div class="writing-achievement" id="alphabet-master">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-text">Alphabet Master</span>
+                            </div>
+                            <div class="writing-achievement" id="number-writer">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-text">Number Writer</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="writing-sidebar">
-                    <div class="writing-examples">
-                        <h4 class="examples-title">Writing Examples</h4>
-                        <div class="example-grid" id="example-grid">
-                            <!-- Examples will be loaded here -->
-                        </div>
-                    </div>
-                    
-                    <div class="writing-tips">
-                        <h4 class="tips-title">💡 Writing Tips for Eric:</h4>
-                        <ul class="writing-tips-list">
-                            <li>✏️ Hold your pencil correctly</li>
-                            <li>👆 Start from the top</li>
-                            <li>🔄 Follow the arrows</li>
-                            <li>🎯 Take your time</li>
-                            <li>🌟 Practice makes perfect!</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="writing-achievements">
-                        <h4 class="achievements-title">Writing Achievements</h4>
-                        <div class="writing-achievement" id="first-letter">
-                            <span class="achievement-icon">🔒</span>
-                            <span class="achievement-text">First Letter</span>
-                        </div>
-                        <div class="writing-achievement" id="alphabet-master">
-                            <span class="achievement-icon">🔒</span>
-                            <span class="achievement-text">Alphabet Master</span>
-                        </div>
-                        <div class="writing-achievement" id="number-writer">
-                            <span class="achievement-icon">🔒</span>
-                            <span class="achievement-text">Number Writer</span>
-                        </div>
-                    </div>
+                <div class="writing-navigation">
+                    <button class="nav-button prev-button" onclick="previousWritingItem()" disabled>
+                        <span class="nav-icon">⬅️</span>
+                        Previous
+                    </button>
+                    <button class="nav-button next-button" onclick="nextWritingItem()">
+                        Next
+                        <span class="nav-icon">➡️</span>
+                    </button>
+                    <button class="nav-button practice-button" onclick="practiceWriting()">
+                        <span class="nav-icon">✏️</span>
+                        Practice More
+                    </button>
                 </div>
             </div>
-            
-            <div class="writing-navigation">
-                <button class="nav-button prev-button" onclick="previousWritingItem()" disabled>
-                    <span class="nav-icon">⬅️</span>
-                    Previous
-                </button>
-                <button class="nav-button next-button" onclick="nextWritingItem()">
-                    Next
-                    <span class="nav-icon">➡️</span>
-                </button>
-                <button class="nav-button practice-button" onclick="practiceWriting()">
-                    <span class="nav-icon">✏️</span>
-                    Practice More
-                </button>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Play Area Section -->
-    <section id="play" class="play-area">
-        <div class="section-header">
-            <h2 class="section-title">
-                <span class="title-icon">🎨</span>
-                Eric's Free Play Area
-                <span class="title-icon">🎨</span>
-            </h2>
-            <p class="section-subtitle">Click anywhere to create colorful bubbles!</p>
-        </div>
-        <div class="play-container" id="play-area">
-            <div class="play-instructions">
-                <div class="instruction-icon">👆</div>
-                <p class="instruction-text">Click anywhere to make bubbles!</p>
+        <!-- Play Area Section -->
+        <section id="play" class="play-area">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">🎨</span>
+                    Eric's Free Play Area
+                    <span class="title-icon">🎨</span>
+                </h2>
+                <p class="section-subtitle">Click anywhere to create colorful bubbles!</p>
             </div>
-            <div class="baby baby-1">👶</div>
-            <div class="baby baby-2">👶</div>
-            <div class="baby baby-3">👶</div>
-            <div class="baby baby-4">👶</div>
-            <div class="floating-toy toy-1">🧸</div>
-            <div class="floating-toy toy-2">🚗</div>
-            <div class="floating-toy toy-3">🎪</div>
-            <div class="floating-toy toy-4">🎨</div>
-            <div class="magic-sparkle sparkle-1">✨</div>
-            <div class="magic-sparkle sparkle-2">✨</div>
-            <div class="magic-sparkle sparkle-3">✨</div>
-        </div>
-    </section>
+            <div class="play-container" id="play-area">
+                <div class="play-instructions">
+                    <div class="instruction-icon">👆</div>
+                    <p class="instruction-text">Click anywhere to make bubbles!</p>
+                </div>
+                <div class="baby baby-1">👶</div>
+                <div class="baby baby-2">👶</div>
+                <div class="baby baby-3">👶</div>
+                <div class="baby baby-4">👶</div>
+                <div class="floating-toy toy-1">🧸</div>
+                <div class="floating-toy toy-2">🚗</div>
+                <div class="floating-toy toy-3">🎪</div>
+                <div class="floating-toy toy-4">🎨</div>
+                <div class="magic-sparkle sparkle-1">✨</div>
+                <div class="magic-sparkle sparkle-2">✨</div>
+                <div class="magic-sparkle sparkle-3">✨</div>
+            </div>
+        </section>
 
-    <!-- Achievements Section -->
-    <section id="achievements" class="achievements">
-        <div class="section-header">
-            <h2 class="section-title">
-                <span class="title-icon">🏆</span>
-                Eric's Achievements
-                <span class="title-icon">🏆</span>
-            </h2>
-            <p class="section-subtitle">See how much you've learned!</p>
-        </div>
-        <div class="achievements-grid">
-            <div class="achievement-card">
-                <div class="achievement-icon">🌟</div>
-                <h3 class="achievement-title">First Steps</h3>
-                <p class="achievement-desc">Complete your first game</p>
-                <div class="achievement-status" id="first-steps">🔒</div>
+        <!-- Achievements Section -->
+        <section id="achievements" class="achievements">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">🏆</span>
+                    Eric's Achievements
+                    <span class="title-icon">🏆</span>
+                </h2>
+                <p class="section-subtitle">See how much you've learned!</p>
             </div>
-            <div class="achievement-card">
-                <div class="achievement-icon">🎨</div>
-                <h3 class="achievement-title">Color Master</h3>
-                <p class="achievement-desc">Learn all colors</p>
-                <div class="achievement-status" id="color-master">🔒</div>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <div class="achievement-icon">🌟</div>
+                    <h3 class="achievement-title">First Steps</h3>
+                    <p class="achievement-desc">Complete your first game</p>
+                    <div class="achievement-status" id="first-steps">🔒</div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">🎨</div>
+                    <h3 class="achievement-title">Color Master</h3>
+                    <p class="achievement-desc">Learn all colors</p>
+                    <div class="achievement-status" id="color-master">🔒</div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">🔢</div>
+                    <h3 class="achievement-title">Number Wizard</h3>
+                    <p class="achievement-desc">Count to 20</p>
+                    <div class="achievement-status" id="number-wizard">🔒</div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">🔤</div>
+                    <h3 class="achievement-title">Alphabet Expert</h3>
+                    <p class="achievement-desc">Know your ABCs</p>
+                    <div class="achievement-status" id="alphabet-expert">🔒</div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">⭐</div>
+                    <h3 class="achievement-title">Shape Finder</h3>
+                    <p class="achievement-desc">Discover all shapes</p>
+                    <div class="achievement-status" id="shape-finder">🔒</div>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">🐾</div>
+                    <h3 class="achievement-title">Animal Friend</h3>
+                    <p class="achievement-desc">Meet all animals</p>
+                    <div class="achievement-status" id="animal-friend">🔒</div>
+                </div>
             </div>
-            <div class="achievement-card">
-                <div class="achievement-icon">🔢</div>
-                <h3 class="achievement-title">Number Wizard</h3>
-                <p class="achievement-desc">Count to 20</p>
-                <div class="achievement-status" id="number-wizard">🔒</div>
-            </div>
-            <div class="achievement-card">
-                <div class="achievement-icon">🔤</div>
-                <h3 class="achievement-title">Alphabet Expert</h3>
-                <p class="achievement-desc">Know your ABCs</p>
-                <div class="achievement-status" id="alphabet-expert">🔒</div>
-            </div>
-            <div class="achievement-card">
-                <div class="achievement-icon">⭐</div>
-                <h3 class="achievement-title">Shape Finder</h3>
-                <p class="achievement-desc">Discover all shapes</p>
-                <div class="achievement-status" id="shape-finder">🔒</div>
-            </div>
-            <div class="achievement-card">
-                <div class="achievement-icon">🐾</div>
-                <h3 class="achievement-title">Animal Friend</h3>
-                <p class="achievement-desc">Meet all animals</p>
-                <div class="achievement-status" id="animal-friend">🔒</div>
-            </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Game Modal -->
     <div id="game-modal" class="modal">
@@ -531,6 +569,7 @@
                     <li>🔢 Numbers & Counting</li>
                     <li>🔤 Letters & Words</li>
                     <li>✍️ Writing Practice</li>
+                    <li>👥 People & Family</li>
                     <li>🐾 Animals & Sounds</li>
                 </ul>
             </div>
