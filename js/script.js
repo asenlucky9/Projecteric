@@ -756,9 +756,15 @@ function setupEventListeners() {
     });
 
     // When the logo is clicked, show the main page and scroll to top
-    document.querySelector('.logo-container a').addEventListener('click', (e) => {
+    document.querySelector('.nav-logo').addEventListener('click', (e) => {
         e.preventDefault();
         showSection('hero'); // 'hero' will trigger the main view and scroll to top
+    });
+
+    // Also make the logo text clickable
+    document.querySelector('.logo-text').addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('hero');
     });
 
     // Active navigation highlighting
@@ -2415,6 +2421,17 @@ const nextPageButton = document.getElementById('next-page');
 const readAloudButton = document.getElementById('read-aloud');
 
 function initializeStorybook() {
+    const storybook = document.getElementById('storybook');
+    const prevPageButton = document.getElementById('prev-page');
+    const nextPageButton = document.getElementById('next-page');
+    const readAloudButton = document.getElementById('read-aloud');
+    
+    // Check if all required elements exist
+    if (!storybook || !prevPageButton || !nextPageButton || !readAloudButton) {
+        console.error('Storybook elements not found');
+        return;
+    }
+    
     const story = stories.spaceAdventure;
     storybook.innerHTML = ''; // Clear previous pages
     story.pages.forEach((page, index) => {
@@ -2428,6 +2445,9 @@ function initializeStorybook() {
         `;
         storybook.appendChild(pageElement);
     });
+    
+    // Reset to first page
+    currentPage = 0;
     updateStoryNav();
 }
 
@@ -2491,7 +2511,24 @@ function showSection(sectionId) {
     if (sectionId === 'story-time') {
         mainContent.style.display = 'none';
         storyTimeSection.style.display = 'block';
-        initializeStorybook(); // Make sure the story is ready
+        
+        // Initialize storybook with error handling
+        try {
+            initializeStorybook(); // Make sure the story is ready
+            speakText("Welcome to Eric's Story Time! Let's read a fun adventure together!");
+        } catch (error) {
+            console.error('Error initializing storybook:', error);
+            // Fallback: create a simple story display
+            const storybook = document.getElementById('storybook');
+            if (storybook) {
+                storybook.innerHTML = `
+                    <div class="story-page active">
+                        <div class="story-emoji">🚀</div>
+                        <p class="story-text">Welcome to Eric's Story Time! Let's read a fun adventure together!</p>
+                    </div>
+                `;
+            }
+        }
     } 
     // For any other link, show the main content and hide the story.
     else {
