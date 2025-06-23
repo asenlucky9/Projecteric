@@ -109,18 +109,19 @@ const games = {
     }
 };
 
-// Writing Section Variables
-let currentWritingMode = 'letters';
-let currentWritingIndex = 0;
+// Writing Section Variables - Enhanced for Kids
+let currentLetter = 0;
+let currentMode = 'letters';
 let isDrawing = false;
-let isErasing = false;
+let lastX = 0;
+let lastY = 0;
 let drawingHistory = [];
-let currentStroke = [];
+let currentStep = 0;
 
-// Writing content arrays
+// Writing content arrays - Enhanced for Eric
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-const words = ['CAT', 'DOG', 'SUN', 'MOON', 'STAR', 'TREE', 'BOOK', 'BALL', 'CAKE', 'FISH'];
+const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const shapes = ['●', '■', '▲', '◆', '★', '♥', '♦', '♣', '♠', '☺'];
 
 // Canvas context
 let canvas, ctx;
@@ -745,6 +746,9 @@ function showWelcomeMessage() {
 
 // Setup event listeners
 function setupEventListeners() {
+    // Initialize mobile enhancements
+    setupMobileEnhancements();
+    
     // Navigation
     document.querySelectorAll('.nav-link').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -873,14 +877,9 @@ function setupEventListeners() {
     });
 }
 
-// Setup play area for bubble creation
+// Setup play area for bubble creation (mobile-optimized)
 function setupPlayArea() {
-    const playArea = document.getElementById("play-area");
-    if (playArea) {
-        playArea.addEventListener("click", function(e) {
-            createBubble(e.clientX, e.clientY);
-        });
-    }
+    setupMobilePlayArea();
 }
 
 // Create bubble at click position
@@ -1578,8 +1577,8 @@ function showNotification(message) {
     `;
     notification.textContent = message;
     
-    const style = document.createElement("style");
-    style.textContent = `
+    const notificationStyle = document.createElement("style");
+    notificationStyle.textContent = `
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -1591,13 +1590,13 @@ function showNotification(message) {
             }
         }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(notificationStyle);
     
     document.body.appendChild(notification);
     
     setTimeout(() => {
         notification.style.animation = "slideOut 0.5s ease forwards";
-        style.textContent += `
+        notificationStyle.textContent += `
             @keyframes slideOut {
                 to {
                     transform: translateX(100%);
@@ -1904,8 +1903,8 @@ function danceParty() {
 }
 
 // Add CSS animations for new effects
-const style = document.createElement('style');
-style.textContent = `
+const animationStyle = document.createElement('style');
+animationStyle.textContent = `
     @keyframes rainbowPulse {
         0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
         50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
@@ -1925,66 +1924,136 @@ style.textContent = `
         75% { transform: translateY(-15px) rotate(5deg); }
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(animationStyle);
 
 // Initialize writing section
 function initWritingSection() {
-    canvas = document.getElementById('writing-canvas');
-    if (canvas) {
-        ctx = canvas.getContext('2d');
-        setupCanvas();
-        loadWritingContent();
+    try {
+        const canvas = document.getElementById('writing-canvas');
+        if (!canvas) {
+            console.error('Writing canvas not found');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('Could not get canvas context');
+            return;
+        }
+
+        // Enhanced canvas setup for responsive design
+        setupResponsiveCanvas(canvas, ctx);
+
+        // Enhanced drawing settings for kids - thicker lines, fun colors
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = getLineWidth(); // Responsive line width
+        ctx.strokeStyle = '#ff6b9d'; // Fun pink color
+
+        // Initialize overlay with better positioning
+        updateCanvasOverlay();
+
+        // Enhanced event listeners for better touch support
+        setupCanvasEventListeners(canvas);
+
+        // Initialize all writing controls
+        initWritingControls();
+        
+        // Update progress and achievements
         updateWritingProgress();
+        updateWritingAchievements();
+        
+        console.log('Writing section initialized successfully for Eric!');
+        
+    } catch (error) {
+        console.error('Error initializing writing section:', error);
     }
 }
 
-// Setup canvas for drawing
-function setupCanvas() {
-    if (!canvas || !ctx) return;
+function setupResponsiveCanvas(canvas, ctx) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
     
-    // Set canvas size
-    canvas.width = 400;
-    canvas.height = 300;
+    // Set canvas size for high DPI displays
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
     
-    // Set default drawing style
-    ctx.strokeStyle = '#ff6b9d';
-    ctx.lineWidth = 4;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    
-    // Add event listeners
+    // Store canvas reference
+    window.writingCanvas = canvas;
+    window.writingCtx = ctx;
+}
+
+function getLineWidth() {
+    // Responsive line width based on screen size
+    const screenWidth = window.innerWidth;
+    if (screenWidth < 480) return 6; // Phone
+    if (screenWidth < 768) return 8; // Tablet
+    if (screenWidth < 1200) return 10; // Small desktop
+    return 12; // Large desktop
+}
+
+function setupCanvasEventListeners(canvas) {
+    // Mouse events for desktop
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
-    
-    // Touch events for mobile
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchmove', handleTouchMove);
-    canvas.addEventListener('touchend', handleTouchEnd);
-    
-    // Prevent scrolling on touch
-    canvas.addEventListener('touchmove', function(e) {
+
+    // Enhanced touch events for mobile devices
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    // Click to start drawing (hide overlay)
+    canvas.addEventListener('click', () => {
+        if (canvas.querySelector('.canvas-overlay')) {
+            hideOverlay();
+        }
+    });
+
+    // Prevent context menu on right click
+    canvas.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-    }, { passive: false });
+    });
 }
 
-// Touch event handlers
+function initWritingControls() {
+    // Initialize mode buttons
+    initModeButtons();
+    
+    // Initialize tool buttons
+    initToolButtons();
+    
+    // Initialize example buttons
+    initExampleButtons();
+    
+    // Initialize navigation
+    initWritingNavigation();
+    
+    // Set initial mode
+    setWritingMode('letters');
+}
+
 function handleTouchStart(e) {
     e.preventDefault();
     const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
+    const rect = e.target.getBoundingClientRect();
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
+    
     startDrawing({ clientX: x, clientY: y });
 }
 
 function handleTouchMove(e) {
     e.preventDefault();
     const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
+    const rect = e.target.getBoundingClientRect();
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
+    
     draw({ clientX: x, clientY: y });
 }
 
@@ -1993,552 +2062,1937 @@ function handleTouchEnd(e) {
     stopDrawing();
 }
 
-// Drawing functions
 function startDrawing(e) {
     isDrawing = true;
-    currentStroke = [];
+    const canvas = document.getElementById('writing-canvas');
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
     
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    currentStroke.push({ x, y });
+    // Get coordinates based on device type
+    const coords = getEventCoordinates(e, rect);
+    lastX = coords.x;
+    lastY = coords.y;
+    
+    // Hide overlay when user starts drawing
+    hideOverlay();
     
     // Play drawing sound
-    playBabySound('coo');
+    playSound('draw');
+    
+    // Add visual feedback
+    addDrawingFeedback(canvas, coords.x, coords.y);
 }
 
 function draw(e) {
     if (!isDrawing) return;
     
+    const canvas = document.getElementById('writing-canvas');
+    const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
     
-    if (isErasing) {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.lineWidth = 20;
+    // Get coordinates based on device type
+    const coords = getEventCoordinates(e, rect);
+    const currentX = coords.x;
+    const currentY = coords.y;
+    
+    // Enhanced drawing with smooth curves
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(currentX, currentY);
+    ctx.stroke();
+    
+    // Add some thickness variation for more natural drawing
+    const distance = Math.sqrt(Math.pow(currentX - lastX, 2) + Math.pow(currentY - lastY, 2));
+    if (distance > 5) {
+        ctx.lineWidth = Math.max(getLineWidth() - 2, 3);
     } else {
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = 4;
+        ctx.lineWidth = getLineWidth();
     }
     
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    currentStroke.push({ x, y });
+    lastX = currentX;
+    lastY = currentY;
+    
+    // Store drawing history for undo
+    drawingHistory.push({
+        x: currentX,
+        y: currentY,
+        timestamp: Date.now(),
+        lineWidth: ctx.lineWidth
+    });
+    
+    // Add drawing particles for fun
+    if (Math.random() > 0.8) {
+        addDrawingParticle(canvas, currentX, currentY);
+    }
 }
 
 function stopDrawing() {
-    if (isDrawing) {
-        isDrawing = false;
-        drawingHistory.push([...currentStroke]);
-        currentStroke = [];
-        
-        // Play completion sound
-        playBabySound('giggle');
-        
-        // Check if drawing is good enough
-        setTimeout(checkDrawingQuality, 500);
+    if (!isDrawing) return;
+    
+    isDrawing = false;
+    
+    // Play completion sound
+    playSound('complete');
+    
+    // Check if drawing is complete enough
+    setTimeout(() => {
+        checkDrawingProgress();
+    }, 500);
+    
+    // Remove drawing feedback
+    removeDrawingFeedback();
+}
+
+function hideOverlay() {
+    const overlay = document.querySelector('.canvas-overlay');
+    if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
     }
 }
 
-// Set writing mode (letters, numbers, words)
+function showOverlay() {
+    const overlay = document.querySelector('.canvas-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+        }, 10);
+    }
+}
+
+function updateCanvasOverlay() {
+    const overlay = document.querySelector('.canvas-overlay');
+    if (!overlay) return;
+    
+    const guide = overlay.querySelector('.trace-guide');
+    if (!guide) return;
+    
+    let currentItem = '';
+    let instruction = '';
+    
+    switch (currentMode) {
+        case 'letters':
+            currentItem = letters[currentLetter];
+            instruction = `Trace the letter ${currentItem}`;
+            break;
+        case 'numbers':
+            currentItem = numbers[currentLetter];
+            instruction = `Trace the number ${currentItem}`;
+            break;
+        case 'shapes':
+            currentItem = shapes[currentLetter];
+            instruction = `Trace the shape ${currentItem}`;
+            break;
+    }
+    
+    const letterGuide = guide.querySelector('.letter-guide');
+    const instructionText = guide.querySelector('.instruction-text');
+    
+    if (letterGuide) letterGuide.textContent = currentItem;
+    if (instructionText) instructionText.textContent = instruction;
+}
+
+function initModeButtons() {
+    const modeButtons = document.querySelectorAll('.mode-button');
+    modeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const mode = button.dataset.mode;
+            if (mode) {
+                setWritingMode(mode);
+            }
+        });
+    });
+}
+
 function setWritingMode(mode) {
-    currentWritingMode = mode;
-    currentWritingIndex = 0;
+    currentMode = mode;
+    currentLetter = 0;
+    currentStep = 0;
     
     // Update active button
     document.querySelectorAll('.mode-button').forEach(btn => {
         btn.classList.remove('active');
+        if (btn.dataset.mode === mode) {
+            btn.classList.add('active');
+        }
     });
-    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-    
-    // Load new content
-    loadWritingContent();
-    updateWritingProgress();
-    
-    // Play mode change sound
-    playBabySound('squeal');
-    
-    // Speak the mode
-    speakText(`Let's practice writing ${mode}!`);
-}
-
-// Load writing content based on current mode
-function loadWritingContent() {
-    let content, title, examples;
-    
-    switch (currentWritingMode) {
-        case 'letters':
-            content = letters;
-            title = `Write the Letter: ${letters[currentWritingIndex]}`;
-            examples = letters.slice(0, 9);
-            break;
-        case 'numbers':
-            content = numbers;
-            title = `Write the Number: ${numbers[currentWritingIndex]}`;
-            examples = numbers;
-            break;
-        case 'words':
-            content = words;
-            title = `Write the Word: ${words[currentWritingIndex]}`;
-            examples = words.slice(0, 9);
-            break;
-    }
-    
-    // Update title and guide
-    document.getElementById('practice-title').textContent = title;
-    document.getElementById('letter-guide').textContent = content[currentWritingIndex];
-    
-    // Update examples grid
-    updateExamplesGrid(examples);
     
     // Clear canvas
     clearCanvas();
-}
-
-// Update examples grid
-function updateExamplesGrid(examples) {
-    const grid = document.getElementById('example-grid');
-    grid.innerHTML = '';
     
-    examples.forEach((item, index) => {
-        const exampleItem = document.createElement('div');
-        exampleItem.className = 'example-item';
-        exampleItem.textContent = item;
-        exampleItem.onclick = () => selectExample(item, index);
-        
-        if (index === currentWritingIndex) {
-            exampleItem.classList.add('active');
-        }
-        
-        grid.appendChild(exampleItem);
-    });
-}
-
-// Select example item
-function selectExample(item, index) {
-    currentWritingIndex = index;
-    loadWritingContent();
+    // Update overlay
+    updateCanvasOverlay();
+    
+    // Update progress
     updateWritingProgress();
     
-    // Update active example
-    document.querySelectorAll('.example-item').forEach(el => {
-        el.classList.remove('active');
-    });
-    event.target.classList.add('active');
+    // Play mode change sound
+    playSound('mode');
+}
+
+function initToolButtons() {
+    const clearBtn = document.querySelector('.tool-button[data-action="clear"]');
+    const undoBtn = document.querySelector('.tool-button[data-action="undo"]');
+    const nextBtn = document.querySelector('.tool-button[data-action="next"]');
+    const prevBtn = document.querySelector('.tool-button[data-action="prev"]');
     
-    // Play selection sound
-    playBabySound('laugh');
+    if (clearBtn) clearBtn.addEventListener('click', clearCanvas);
+    if (undoBtn) undoBtn.addEventListener('click', undoLastStroke);
+    if (nextBtn) nextBtn.addEventListener('click', nextItem);
+    if (prevBtn) prevBtn.addEventListener('click', prevItem);
 }
 
-// Navigation functions
-function nextWritingItem() {
-    const maxIndex = getCurrentContent().length - 1;
-    if (currentWritingIndex < maxIndex) {
-        currentWritingIndex++;
-        loadWritingContent();
-        updateWritingProgress();
-        updateNavigationButtons();
-        
-        // Play next sound
-        playBabySound('coo');
-    }
-}
-
-function previousWritingItem() {
-    if (currentWritingIndex > 0) {
-        currentWritingIndex--;
-        loadWritingContent();
-        updateWritingProgress();
-        updateNavigationButtons();
-        
-        // Play previous sound
-        playBabySound('giggle');
-    }
-}
-
-// Update navigation buttons
-function updateNavigationButtons() {
-    const maxIndex = getCurrentContent().length - 1;
-    const prevButton = document.querySelector('.prev-button');
-    const nextButton = document.querySelector('.next-button');
-    
-    prevButton.disabled = currentWritingIndex === 0;
-    nextButton.disabled = currentWritingIndex === maxIndex;
-}
-
-// Get current content array
-function getCurrentContent() {
-    switch (currentWritingMode) {
-        case 'letters': return letters;
-        case 'numbers': return numbers;
-        case 'words': return words;
-        default: return letters;
-    }
-}
-
-// Update writing progress
-function updateWritingProgress() {
-    const content = getCurrentContent();
-    const progress = document.getElementById('practice-progress');
-    progress.textContent = `${currentWritingIndex + 1}/${content.length}`;
-}
-
-// Canvas tools
 function clearCanvas() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const canvas = document.getElementById('writing-canvas');
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    
+    ctx.clearRect(0, 0, rect.width, rect.height);
     drawingHistory = [];
     
+    // Show overlay again
+    showOverlay();
+    
     // Play clear sound
-    playBabySound('squeal');
+    playSound('clear');
 }
 
-function undoStroke() {
-    if (drawingHistory.length > 0) {
-        drawingHistory.pop();
-        redrawCanvas();
-        
-        // Play undo sound
-        playBabySound('giggle');
-    }
-}
-
-function toggleEraser() {
-    isErasing = !isErasing;
-    const eraserButton = document.querySelector('.tool-button:last-child');
+function undoLastStroke() {
+    if (drawingHistory.length === 0) return;
     
-    if (isErasing) {
-        eraserButton.classList.add('active');
-        canvas.classList.add('erasing');
+    const canvas = document.getElementById('writing-canvas');
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    
+    // Remove last stroke
+    drawingHistory.pop();
+    
+    // Redraw remaining strokes
+    redrawHistory();
+    
+    // Play undo sound
+    playSound('undo');
+}
+
+function redrawHistory() {
+    if (drawingHistory.length === 0) return;
+    
+    const canvas = document.getElementById('writing-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    ctx.beginPath();
+    ctx.moveTo(drawingHistory[0].x, drawingHistory[0].y);
+    
+    for (let i = 1; i < drawingHistory.length; i++) {
+        ctx.lineTo(drawingHistory[i].x, drawingHistory[i].y);
+    }
+    
+    ctx.stroke();
+}
+
+function nextItem() {
+    const maxItems = getMaxItems();
+    if (currentLetter < maxItems - 1) {
+        currentLetter++;
+        currentStep = 0;
+        clearCanvas();
+        updateCanvasOverlay();
+        updateWritingProgress();
+        playSound('next');
     } else {
-        eraserButton.classList.remove('active');
-        canvas.classList.remove('erasing');
+        // Completed all items
+        showCompletionMessage();
     }
-    
-    // Play tool sound
-    playBabySound('coo');
 }
 
-// Redraw canvas from history
-function redrawCanvas() {
-    if (!ctx) return;
+function prevItem() {
+    if (currentLetter > 0) {
+        currentLetter--;
+        currentStep = 0;
+        clearCanvas();
+        updateCanvasOverlay();
+        updateWritingProgress();
+        playSound('prev');
+    }
+}
+
+function getMaxItems() {
+    switch (currentMode) {
+        case 'letters': return letters.length;
+        case 'numbers': return numbers.length;
+        case 'shapes': return shapes.length;
+        default: return letters.length;
+    }
+}
+
+function getCurrentItem() {
+    switch (currentMode) {
+        case 'letters': return letters[currentLetter];
+        case 'numbers': return numbers[currentLetter];
+        case 'shapes': return shapes[currentLetter];
+        default: return letters[currentLetter];
+    }
+}
+
+function initExampleButtons() {
+    const exampleItems = document.querySelectorAll('.example-item');
+    exampleItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const letter = item.textContent.trim();
+            selectExample(letter);
+        });
+    });
+}
+
+function selectExample(letter) {
+    // Remove previous selection
+    document.querySelectorAll('.example-item').forEach(item => {
+        item.classList.remove('selected');
+    });
     
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Find and select the clicked item
+    document.querySelectorAll('.example-item').forEach(item => {
+        if (item.textContent.trim() === letter) {
+            item.classList.add('selected');
+        }
+    });
     
-    drawingHistory.forEach(stroke => {
-        if (stroke.length > 0) {
-            ctx.beginPath();
-            ctx.moveTo(stroke[0].x, stroke[0].y);
-            
-            stroke.forEach(point => {
-                ctx.lineTo(point.x, point.y);
-            });
-            
-            ctx.stroke();
+    // Update current letter based on mode
+    const items = currentMode === 'letters' ? letters : 
+                  currentMode === 'numbers' ? numbers : shapes;
+    
+    const index = items.indexOf(letter);
+    if (index !== -1) {
+        currentLetter = index;
+        currentStep = 0;
+        clearCanvas();
+        updateCanvasOverlay();
+        updateWritingProgress();
+        playSound('select');
+    }
+}
+
+function initWritingNavigation() {
+    const prevBtn = document.querySelector('.nav-button[data-action="prev"]');
+    const nextBtn = document.querySelector('.nav-button[data-action="next"]');
+    const practiceBtn = document.querySelector('.nav-button[data-action="practice"]');
+    
+    if (prevBtn) prevBtn.addEventListener('click', prevItem);
+    if (nextBtn) nextBtn.addEventListener('click', nextItem);
+    if (practiceBtn) practiceBtn.addEventListener('click', startPracticeMode);
+    
+    // Update button states
+    updateNavigationButtons();
+}
+
+function updateNavigationButtons() {
+    const prevBtn = document.querySelector('.nav-button[data-action="prev"]');
+    const nextBtn = document.querySelector('.nav-button[data-action="next"]');
+    
+    if (prevBtn) {
+        prevBtn.disabled = currentLetter === 0;
+    }
+    
+    if (nextBtn) {
+        const maxItems = getMaxItems();
+        nextBtn.disabled = currentLetter >= maxItems - 1;
+    }
+}
+
+function updateWritingProgress() {
+    const progressElement = document.querySelector('.practice-progress');
+    if (!progressElement) return;
+    
+    const maxItems = getMaxItems();
+    const progress = Math.round(((currentLetter + 1) / maxItems) * 100);
+    const currentItem = getCurrentItem();
+    
+    progressElement.textContent = `${currentItem} - ${progress}% Complete`;
+    
+    // Update navigation buttons
+    updateNavigationButtons();
+    
+    // Update achievements
+    updateWritingAchievements();
+}
+
+function checkDrawingProgress() {
+    // Simple progress check based on drawing history length
+    if (drawingHistory.length > 10) {
+        currentStep++;
+        if (currentStep >= 3) { // 3 steps to complete
+            showProgressMessage();
+        }
+    }
+}
+
+function showProgressMessage() {
+    const messages = [
+        "Great job! Keep going! 🎉",
+        "You're doing amazing! ⭐",
+        "Almost there! 🌟",
+        "Perfect! You've got this! 🏆"
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    showNotification(randomMessage, 'success');
+}
+
+function showCompletionMessage() {
+    const message = `Congratulations! You've completed all ${currentMode}! 🎉🎊`;
+    showNotification(message, 'success');
+    
+    // Unlock achievement
+    unlockAchievement('writing-master');
+}
+
+function updateWritingAchievements() {
+    const achievements = [
+        { id: 'first-letter', condition: currentLetter >= 0, text: 'First Letter Written', icon: '✏️' },
+        { id: 'halfway', condition: currentLetter >= Math.floor(getMaxItems() / 2), text: 'Halfway There!', icon: '🎯' },
+        { id: 'almost-done', condition: currentLetter >= getMaxItems() - 3, text: 'Almost Done!', icon: '🏁' },
+        { id: 'writing-master', condition: currentLetter >= getMaxItems() - 1, text: 'Writing Master!', icon: '👑' }
+    ];
+    
+    achievements.forEach(achievement => {
+        const element = document.querySelector(`[data-achievement="${achievement.id}"]`);
+        if (element && achievement.condition) {
+            element.classList.add('unlocked');
+            const icon = element.querySelector('.achievement-icon');
+            const text = element.querySelector('.achievement-text');
+            if (icon) icon.textContent = achievement.icon;
+            if (text) text.textContent = achievement.text;
         }
     });
 }
 
-// Check drawing quality (simple implementation)
-function checkDrawingQuality() {
-    if (drawingHistory.length > 0) {
-        // Simple quality check - if there are strokes, consider it good
-        const totalStrokes = drawingHistory.reduce((total, stroke) => total + stroke.length, 0);
+function startPracticeMode() {
+    // Randomize the order for practice
+    const items = currentMode === 'letters' ? [...letters] : 
+                  currentMode === 'numbers' ? [...numbers] : [...shapes];
+    
+    // Shuffle array
+    for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+    }
+    
+    // Set to first shuffled item
+    const firstItem = items[0];
+    const originalItems = currentMode === 'letters' ? letters : 
+                         currentMode === 'numbers' ? numbers : shapes;
+    currentLetter = originalItems.indexOf(firstItem);
+    
+    clearCanvas();
+    updateCanvasOverlay();
+    updateWritingProgress();
+    
+    showNotification('Practice mode started! Try to write each item quickly! 🚀', 'info');
+    playSound('practice');
+}
+
+// Enhanced sound effects for writing
+function playSound(type) {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    let frequency = 440;
+    let duration = 0.1;
+    
+    switch (type) {
+        case 'draw':
+            frequency = 800;
+            duration = 0.05;
+            break;
+        case 'complete':
+            frequency = 1200;
+            duration = 0.2;
+            break;
+        case 'clear':
+            frequency = 300;
+            duration = 0.15;
+            break;
+        case 'undo':
+            frequency = 200;
+            duration = 0.1;
+            break;
+        case 'next':
+            frequency = 600;
+            duration = 0.15;
+            break;
+        case 'prev':
+            frequency = 400;
+            duration = 0.15;
+            break;
+        case 'mode':
+            frequency = 1000;
+            duration = 0.2;
+            break;
+        case 'select':
+            frequency = 700;
+            duration = 0.1;
+            break;
+        case 'practice':
+            frequency = 900;
+            duration = 0.3;
+            break;
+    }
+    
+    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration);
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Style the notification
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Initialize writing section when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize writing section when writing tab is clicked
+    const writingTab = document.querySelector('a[href="#writing"]');
+    if (writingTab) {
+        writingTab.addEventListener('click', () => {
+            setTimeout(initWritingSection, 100);
+        });
+    }
+    
+    // Also initialize if we're already on the writing section
+    if (window.location.hash === '#writing') {
+        setTimeout(initWritingSection, 100);
+    }
+});
+
+// Handle window resize for responsive canvas
+window.addEventListener('resize', () => {
+    const canvas = document.getElementById('writing-canvas');
+    if (canvas && canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
         
-        if (totalStrokes > 10) {
-            // Good drawing
-            showWritingSuccess();
-            addScore(10);
-            
-            // Unlock achievements
-            checkWritingAchievements();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        
+        // Redraw history if any
+        if (drawingHistory.length > 0) {
+            redrawHistory();
         }
+    }
+});
+
+function getEventCoordinates(e, rect) {
+    let x, y;
+    
+    if (e.touches && e.touches[0]) {
+        // Touch event
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        // Mouse event
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+    
+    return { x, y };
+}
+
+function addDrawingFeedback(canvas, x, y) {
+    // Add a small glow effect where drawing starts
+    const feedback = document.createElement('div');
+    feedback.className = 'drawing-feedback';
+    feedback.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: 20px;
+        height: 20px;
+        background: radial-gradient(circle, rgba(255, 107, 157, 0.8) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1000;
+        animation: drawingPulse 0.3s ease-out;
+    `;
+    
+    canvas.parentElement.appendChild(feedback);
+    
+    setTimeout(() => {
+        if (feedback.parentElement) {
+            feedback.parentElement.removeChild(feedback);
+        }
+    }, 300);
+}
+
+function removeDrawingFeedback() {
+    const feedbacks = document.querySelectorAll('.drawing-feedback');
+    feedbacks.forEach(feedback => {
+        if (feedback.parentElement) {
+            feedback.parentElement.removeChild(feedback);
+        }
+    });
+}
+
+function addDrawingParticle(canvas, x, y) {
+    const particle = document.createElement('div');
+    particle.className = 'drawing-particle';
+    particle.style.cssText = `
+        position: absolute;
+        left: ${x}px;
+        top: ${y}px;
+        width: 4px;
+        height: 4px;
+        background: #ff6b9d;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 999;
+        animation: particleFloat 1s ease-out forwards;
+    `;
+    
+    canvas.parentElement.appendChild(particle);
+    
+    setTimeout(() => {
+        if (particle.parentElement) {
+            particle.parentElement.removeChild(particle);
+        }
+    }, 1000);
+}
+
+// Enhanced window resize handler for responsive writing section
+window.addEventListener('resize', () => {
+    const canvas = document.getElementById('writing-canvas');
+    if (canvas && canvas.getContext) {
+        // Re-setup canvas for new size
+        setupResponsiveCanvas(canvas, canvas.getContext('2d'));
+        
+        // Update line width for new screen size
+        const ctx = canvas.getContext('2d');
+        ctx.lineWidth = getLineWidth();
+        
+        // Redraw history if any
+        if (drawingHistory.length > 0) {
+            redrawHistory();
+        }
+        
+        // Update overlay positioning
+        updateCanvasOverlay();
+    }
+    
+    // Update responsive elements
+    updateResponsiveElements();
+});
+
+function updateResponsiveElements() {
+    // Update button sizes for touch devices
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const buttons = document.querySelectorAll('.mode-button, .tool-button, .nav-button');
+    
+    buttons.forEach(button => {
+        if (isTouchDevice) {
+            button.style.minHeight = '48px';
+            button.style.minWidth = '48px';
+        } else {
+            button.style.minHeight = '';
+            button.style.minWidth = '';
+        }
+    });
+    
+    // Update example items for touch devices
+    const exampleItems = document.querySelectorAll('.example-item');
+    exampleItems.forEach(item => {
+        if (isTouchDevice) {
+            item.style.minHeight = '60px';
+            item.style.minWidth = '60px';
+        } else {
+            item.style.minHeight = '';
+            item.style.minWidth = '';
+        }
+    });
+}
+
+// Enhanced initialization for writing section
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize writing section when writing tab is clicked
+    const writingTab = document.querySelector('a[href="#writing"]');
+    if (writingTab) {
+        writingTab.addEventListener('click', () => {
+            setTimeout(() => {
+                initWritingSection();
+                updateResponsiveElements();
+            }, 100);
+        });
+    }
+    
+    // Also initialize if we're already on the writing section
+    if (window.location.hash === '#writing') {
+        setTimeout(() => {
+            initWritingSection();
+            updateResponsiveElements();
+        }, 100);
+    }
+    
+    // Initialize responsive elements on page load
+    updateResponsiveElements();
+});
+
+// Enhanced touch detection and optimization
+function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+// Optimize canvas for touch devices
+function optimizeCanvasForTouch(canvas) {
+    if (isTouchDevice()) {
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        canvas.addEventListener('touchend', (event) => {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Prevent scrolling when drawing
+        canvas.addEventListener('touchmove', (event) => {
+            if (isDrawing) {
+                event.preventDefault();
+            }
+        }, { passive: false });
     }
 }
 
-// Show writing success
-function showWritingSuccess() {
-    // Create success animation
-    const successDiv = document.createElement('div');
-    successDiv.className = 'writing-success';
-    successDiv.innerHTML = `
-        <div class="success-content">
-            <span class="success-icon">🌟</span>
-            <span class="success-text">Great job, Eric!</span>
+// Enhanced canvas setup with touch optimization
+function setupResponsiveCanvas(canvas, ctx) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Set canvas size for high DPI displays
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    
+    // Store canvas reference
+    window.writingCanvas = canvas;
+    window.writingCtx = ctx;
+    
+    // Optimize for touch devices
+    optimizeCanvasForTouch(canvas);
+    
+    // Set initial drawing properties
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = getLineWidth();
+    ctx.strokeStyle = '#ff6b9d';
+}
+
+// Enhanced line width calculation with device detection
+function getLineWidth() {
+    const screenWidth = window.innerWidth;
+    const isTouch = isTouchDevice();
+    
+    if (isTouch) {
+        // Thicker lines for touch devices
+        if (screenWidth < 480) return 8; // Phone
+        if (screenWidth < 768) return 10; // Tablet
+        if (screenWidth < 1200) return 12; // Small desktop
+        return 14; // Large desktop
+    } else {
+        // Standard lines for mouse devices
+        if (screenWidth < 480) return 6; // Phone
+        if (screenWidth < 768) return 8; // Tablet
+        if (screenWidth < 1200) return 10; // Small desktop
+        return 12; // Large desktop
+    }
+}
+
+// Device Mode Management System
+let currentDeviceMode = 'web'; // 'phone', 'tablet', 'web'
+let deviceModeInitialized = false;
+
+// Device mode detection and management
+function detectDeviceMode() {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const isTouch = isTouchDevice();
+    const pixelRatio = window.devicePixelRatio || 1;
+    
+    // Enhanced device detection
+    if (screenWidth < 480 || (screenWidth < 768 && screenHeight < 600)) {
+        return 'phone';
+    } else if (screenWidth < 1024 || (screenWidth < 1200 && isTouch)) {
+        return 'tablet';
+    } else {
+        return 'web';
+    }
+}
+
+function setDeviceMode(mode) {
+    if (currentDeviceMode === mode) return;
+    
+    currentDeviceMode = mode;
+    document.body.setAttribute('data-device-mode', mode);
+    
+    // Apply device-specific optimizations
+    applyDeviceModeOptimizations(mode);
+    
+    // Update UI elements
+    updateDeviceModeUI();
+    
+    // Reinitialize components for new mode
+    reinitializeForDeviceMode(mode);
+    
+    console.log(`Device mode changed to: ${mode}`);
+}
+
+function applyDeviceModeOptimizations(mode) {
+    const body = document.body;
+    
+    // Remove previous mode classes
+    body.classList.remove('phone-mode', 'tablet-mode', 'web-mode');
+    
+    // Add current mode class
+    body.classList.add(`${mode}-mode`);
+    
+    // Apply mode-specific settings
+    switch (mode) {
+        case 'phone':
+            applyPhoneOptimizations();
+            break;
+        case 'tablet':
+            applyTabletOptimizations();
+            break;
+        case 'web':
+            applyWebOptimizations();
+            break;
+    }
+}
+
+function applyPhoneOptimizations() {
+    // Phone-specific optimizations
+    document.documentElement.style.setProperty('--touch-target-size', '48px');
+    document.documentElement.style.setProperty('--font-size-base', '14px');
+    document.documentElement.style.setProperty('--spacing-unit', '0.5rem');
+    document.documentElement.style.setProperty('--border-radius', '8px');
+    
+    // Enable touch-friendly interactions
+    enableTouchOptimizations();
+    
+    // Optimize for portrait orientation
+    optimizeForPortrait();
+}
+
+function applyTabletOptimizations() {
+    // Tablet-specific optimizations
+    document.documentElement.style.setProperty('--touch-target-size', '44px');
+    document.documentElement.style.setProperty('--font-size-base', '16px');
+    document.documentElement.style.setProperty('--spacing-unit', '0.75rem');
+    document.documentElement.style.setProperty('--border-radius', '12px');
+    
+    // Enable touch-friendly interactions
+    enableTouchOptimizations();
+    
+    // Support both orientations
+    supportBothOrientations();
+}
+
+function applyWebOptimizations() {
+    // Web-specific optimizations
+    document.documentElement.style.setProperty('--touch-target-size', '32px');
+    document.documentElement.style.setProperty('--font-size-base', '18px');
+    document.documentElement.style.setProperty('--spacing-unit', '1rem');
+    document.documentElement.style.setProperty('--border-radius', '16px');
+    
+    // Enable mouse-friendly interactions
+    enableMouseOptimizations();
+    
+    // Optimize for desktop
+    optimizeForDesktop();
+}
+
+function enableTouchOptimizations() {
+    // Add touch-friendly styles
+    document.body.classList.add('touch-optimized');
+    document.body.classList.remove('mouse-optimized');
+    
+    // Increase touch targets
+    const touchElements = document.querySelectorAll('button, .nav-item, .game-item, .example-item');
+    touchElements.forEach(element => {
+        element.style.minHeight = 'var(--touch-target-size)';
+        element.style.minWidth = 'var(--touch-target-size)';
+    });
+}
+
+function enableMouseOptimizations() {
+    // Add mouse-friendly styles
+    document.body.classList.add('mouse-optimized');
+    document.body.classList.remove('touch-optimized');
+    
+    // Standard touch targets
+    const touchElements = document.querySelectorAll('button, .nav-item, .game-item, .example-item');
+    touchElements.forEach(element => {
+        element.style.minHeight = '';
+        element.style.minWidth = '';
+    });
+}
+
+function optimizeForPortrait() {
+    // Phone portrait optimizations
+    const gameArea = document.querySelector('.game-area');
+    if (gameArea) {
+        gameArea.style.flexDirection = 'column';
+        gameArea.style.gap = '1rem';
+    }
+    
+    // Stack navigation vertically
+    const nav = document.querySelector('.nav');
+    if (nav) {
+        nav.style.flexDirection = 'column';
+        nav.style.width = '100%';
+    }
+}
+
+function supportBothOrientations() {
+    // Tablet orientation support
+    const gameArea = document.querySelector('.game-area');
+    if (gameArea) {
+        gameArea.style.flexDirection = 'row';
+        gameArea.style.gap = '1.5rem';
+    }
+    
+    // Flexible navigation
+    const nav = document.querySelector('.nav');
+    if (nav) {
+        nav.style.flexDirection = 'row';
+        nav.style.flexWrap = 'wrap';
+    }
+}
+
+function optimizeForDesktop() {
+    // Desktop optimizations
+    const gameArea = document.querySelector('.game-area');
+    if (gameArea) {
+        gameArea.style.flexDirection = 'row';
+        gameArea.style.gap = '2rem';
+    }
+    
+    // Horizontal navigation
+    const nav = document.querySelector('.nav');
+    if (nav) {
+        nav.style.flexDirection = 'row';
+        nav.style.flexWrap = 'nowrap';
+    }
+}
+
+function updateDeviceModeUI() {
+    // Update device mode indicator
+    const modeIndicator = document.getElementById('device-mode-indicator');
+    if (modeIndicator) {
+        modeIndicator.textContent = currentDeviceMode.toUpperCase();
+        modeIndicator.className = `device-mode-indicator ${currentDeviceMode}-mode`;
+    }
+    
+    // Update responsive elements
+    updateResponsiveElements();
+    
+    // Update game layouts
+    updateGameLayouts();
+}
+
+function updateGameLayouts() {
+    // Update game layouts based on device mode
+    const games = ['alphabet', 'numbers', 'colors', 'shapes', 'animals', 'words', 'people'];
+    
+    games.forEach(gameType => {
+        const gameContainer = document.querySelector(`.${gameType}-game`);
+        if (gameContainer) {
+            gameContainer.setAttribute('data-device-mode', currentDeviceMode);
+        }
+    });
+    
+    // Update writing section layout
+    const writingSection = document.querySelector('.writing');
+    if (writingSection) {
+        writingSection.setAttribute('data-device-mode', currentDeviceMode);
+    }
+}
+
+function reinitializeForDeviceMode(mode) {
+    // Reinitialize components for new device mode
+    switch (mode) {
+        case 'phone':
+            initializePhoneMode();
+            break;
+        case 'tablet':
+            initializeTabletMode();
+            break;
+        case 'web':
+            initializeWebMode();
+            break;
+    }
+    
+    // Reinitialize writing section if active
+    if (window.location.hash === '#writing') {
+        setTimeout(() => {
+            initWritingSection();
+        }, 100);
+    }
+}
+
+function initializePhoneMode() {
+    // Phone-specific initializations
+    console.log('Initializing phone mode...');
+    
+    // Enable swipe gestures
+    enableSwipeGestures();
+    
+    // Optimize for single-handed use
+    optimizeForSingleHand();
+    
+    // Enable vibration feedback
+    enableVibrationFeedback();
+}
+
+function initializeTabletMode() {
+    // Tablet-specific initializations
+    console.log('Initializing tablet mode...');
+    
+    // Enable multi-touch gestures
+    enableMultiTouchGestures();
+    
+    // Optimize for two-handed use
+    optimizeForTwoHands();
+    
+    // Enable pen support
+    enablePenSupport();
+}
+
+function initializeWebMode() {
+    // Web-specific initializations
+    console.log('Initializing web mode...');
+    
+    // Enable keyboard shortcuts
+    enableKeyboardShortcuts();
+    
+    // Optimize for mouse interaction
+    optimizeForMouseInteraction();
+    
+    // Enable right-click context menus
+    enableContextMenus();
+}
+
+function enableSwipeGestures() {
+    // Add swipe gesture support for phone
+    let startX, startY, endX, endY;
+    
+    document.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        endX = e.changedTouches[0].clientX;
+        endY = e.changedTouches[0].clientY;
+        
+        const diffX = startX - endX;
+        const diffY = startY - endY;
+        
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            // Horizontal swipe
+            if (diffX > 50) {
+                // Swipe left - next
+                handleSwipeLeft();
+            } else if (diffX < -50) {
+                // Swipe right - previous
+                handleSwipeRight();
+            }
+        } else {
+            // Vertical swipe
+            if (diffY > 50) {
+                // Swipe up - menu
+                handleSwipeUp();
+            } else if (diffY < -50) {
+                // Swipe down - close
+                handleSwipeDown();
+            }
+        }
+    });
+}
+
+function enableMultiTouchGestures() {
+    // Add multi-touch gesture support for tablet
+    let initialDistance = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            initialDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    });
+    
+    document.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            const currentDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            
+            const scale = currentDistance / initialDistance;
+            handlePinchZoom(scale);
+        }
+    });
+}
+
+function enableKeyboardShortcuts() {
+    // Add keyboard shortcuts for web
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            switch (e.key) {
+                case '1':
+                    e.preventDefault();
+                    navigateToSection('alphabet');
+                    break;
+                case '2':
+                    e.preventDefault();
+                    navigateToSection('numbers');
+                    break;
+                case '3':
+                    e.preventDefault();
+                    navigateToSection('colors');
+                    break;
+                case '4':
+                    e.preventDefault();
+                    navigateToSection('shapes');
+                    break;
+                case '5':
+                    e.preventDefault();
+                    navigateToSection('animals');
+                    break;
+                case '6':
+                    e.preventDefault();
+                    navigateToSection('words');
+                    break;
+                case '7':
+                    e.preventDefault();
+                    navigateToSection('people');
+                    break;
+                case '8':
+                    e.preventDefault();
+                    navigateToSection('writing');
+                    break;
+                case '9':
+                    e.preventDefault();
+                    navigateToSection('story');
+                    break;
+                case '0':
+                    e.preventDefault();
+                    navigateToSection('play');
+                    break;
+            }
+        }
+    });
+}
+
+// Swipe gesture handlers
+function handleSwipeLeft() {
+    // Navigate to next item
+    if (currentGame) {
+        nextLearning();
+    }
+}
+
+function handleSwipeRight() {
+    // Navigate to previous item
+    if (currentGame) {
+        // Previous logic would go here
+    }
+}
+
+function handleSwipeUp() {
+    // Open menu or show options
+    showQuickMenu();
+}
+
+function handleSwipeDown() {
+    // Close current game or go back
+    if (currentGame) {
+        closeGame();
+    }
+}
+
+function handlePinchZoom(scale) {
+    // Handle pinch zoom for tablet
+    const gameArea = document.querySelector('.game-area');
+    if (gameArea) {
+        gameArea.style.transform = `scale(${Math.min(Math.max(scale, 0.5), 2)})`;
+    }
+}
+
+function showQuickMenu() {
+    // Show quick access menu for phone
+    const quickMenu = document.createElement('div');
+    quickMenu.className = 'quick-menu phone-mode';
+    quickMenu.innerHTML = `
+        <div class="quick-menu-content">
+            <h3>Quick Menu</h3>
+            <div class="quick-menu-items">
+                <button onclick="navigateToSection('alphabet')">ABC</button>
+                <button onclick="navigateToSection('numbers')">123</button>
+                <button onclick="navigateToSection('colors')">🎨</button>
+                <button onclick="navigateToSection('shapes')">🔷</button>
+                <button onclick="navigateToSection('animals')">🐾</button>
+                <button onclick="navigateToSection('writing')">✏️</button>
+            </div>
+            <button class="close-menu" onclick="closeQuickMenu()">✕</button>
         </div>
     `;
     
-    document.body.appendChild(successDiv);
+    document.body.appendChild(quickMenu);
     
-    // Remove after animation
+    // Animate in
     setTimeout(() => {
-        document.body.removeChild(successDiv);
-    }, 2000);
-    
-    // Play success sound
-    playBabySound('laugh');
-    speakText('Excellent writing, Eric!');
+        quickMenu.classList.add('show');
+    }, 10);
 }
 
-// Check writing achievements
-function checkWritingAchievements() {
-    const content = getCurrentContent();
-    const progress = currentWritingIndex + 1;
-    
-    // First letter achievement
-    if (progress === 1) {
-        unlockAchievement('first-letter');
-    }
-    
-    // Alphabet master achievement
-    if (currentWritingMode === 'letters' && progress === letters.length) {
-        unlockAchievement('alphabet-master');
-    }
-    
-    // Number writer achievement
-    if (currentWritingMode === 'numbers' && progress === numbers.length) {
-        unlockAchievement('number-writer');
-    }
-}
-
-// Unlock writing achievement
-function unlockAchievement(achievementId) {
-    const achievement = document.getElementById(achievementId);
-    if (achievement && !achievement.classList.contains('unlocked')) {
-        achievement.classList.add('unlocked');
-        achievement.querySelector('.achievement-icon').textContent = '✅';
-        
-        // Show achievement notification
-        showAchievementNotification(achievement.querySelector('.achievement-text').textContent);
-        
-        // Play achievement sound
-        playBabySound('laugh');
-        triggerConfetti();
-    }
-}
-
-// Practice more writing
-function practiceWriting() {
-    // Randomize the current item for more practice
-    const content = getCurrentContent();
-    const randomIndex = Math.floor(Math.random() * content.length);
-    currentWritingIndex = randomIndex;
-    
-    loadWritingContent();
-    updateWritingProgress();
-    updateNavigationButtons();
-    
-    // Play practice sound
-    playBabySound('squeal');
-    speakText('Let\'s practice more writing!');
-}
-
-// Add CSS for writing success animation
-const writingSuccessCSS = `
-.writing-success {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    animation: writingSuccessIn 0.5s ease-out;
-}
-
-.success-content {
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    color: white;
-    padding: 2rem 3rem;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.success-icon {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 1rem;
-    animation: bounce 1s infinite;
-}
-
-.success-text {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-@keyframes writingSuccessIn {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.5);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-`;
-
-// Add CSS to document
-const styleSheet = document.createElement('style');
-styleSheet.textContent = writingSuccessCSS;
-document.head.appendChild(styleSheet);
-
-// Story Time Feature
-const stories = {
-    spaceAdventure: {
-        title: "Eric's Space Adventure",
-        pages: [
-            {
-                image: "🚀",
-                text: "Once upon a time, a brave explorer named Eric got into his super rocket ship."
-            },
-            {
-                image: "✨",
-                text: "He blasted off into space, zooming past twinkling stars and colorful planets."
-            },
-            {
-                image: "🌕",
-                text: "Eric landed on the moon! He bounced up and down, laughing in his space suit."
-            },
-            {
-                image: "👽",
-                text: "A friendly, green alien waved at him. 'Welcome to space, Eric!' it beeped."
-            },
-            {
-                image: "🌍",
-                text: "After a day of adventure, Eric flew back home, excited to tell Mummy T & E all about it."
+function closeQuickMenu() {
+    const quickMenu = document.querySelector('.quick-menu');
+    if (quickMenu) {
+        quickMenu.classList.remove('show');
+        setTimeout(() => {
+            if (quickMenu.parentElement) {
+                quickMenu.parentElement.removeChild(quickMenu);
             }
-        ]
+        }, 300);
     }
-};
+}
 
-let currentPage = 0;
-const storybook = document.getElementById('storybook');
-const prevPageButton = document.getElementById('prev-page');
-const nextPageButton = document.getElementById('next-page');
-const readAloudButton = document.getElementById('read-aloud');
+function navigateToSection(section) {
+    // Navigate to specific section
+    const sectionElement = document.querySelector(`#${section}`);
+    if (sectionElement) {
+        sectionElement.scrollIntoView({ behavior: 'smooth' });
+        
+        // Update active navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const navItem = document.querySelector(`[href="#${section}"]`);
+        if (navItem) {
+            navItem.classList.add('active');
+        }
+    }
+}
 
-function initializeStorybook() {
-    const storybook = document.getElementById('storybook');
-    const prevPageButton = document.getElementById('prev-page');
-    const nextPageButton = document.getElementById('next-page');
-    const readAloudButton = document.getElementById('read-aloud');
+// Device mode change detection
+function handleDeviceModeChange() {
+    const newMode = detectDeviceMode();
+    if (newMode !== currentDeviceMode) {
+        setDeviceMode(newMode);
+    }
+}
+
+// Initialize device mode system
+function initializeDeviceModeSystem() {
+    if (deviceModeInitialized) return;
     
-    // Check if all required elements exist
-    if (!storybook || !prevPageButton || !nextPageButton || !readAloudButton) {
-        console.error('Storybook elements not found');
+    // Set initial device mode
+    const initialMode = detectDeviceMode();
+    setDeviceMode(initialMode);
+    
+    // Listen for orientation changes
+    window.addEventListener('orientationchange', () => {
+        setTimeout(handleDeviceModeChange, 100);
+    });
+    
+    // Listen for window resize
+    window.addEventListener('resize', () => {
+        handleDeviceModeChange();
+    });
+    
+    deviceModeInitialized = true;
+    console.log('Device mode system initialized');
+}
+
+// Enhanced touch detection and optimization
+function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+// Helper functions for device mode optimization
+function optimizeForSingleHand() {
+    // Optimize UI for single-handed phone use
+    const nav = document.querySelector('.nav');
+    if (nav) {
+        nav.style.position = 'fixed';
+        nav.style.bottom = '0';
+        nav.style.left = '0';
+        nav.style.right = '0';
+        nav.style.zIndex = '1000';
+        nav.style.background = 'rgba(255, 255, 255, 0.95)';
+        nav.style.backdropFilter = 'blur(10px)';
+        nav.style.borderTop = '1px solid rgba(0, 0, 0, 0.1)';
+    }
+}
+
+function optimizeForTwoHands() {
+    // Optimize UI for two-handed tablet use
+    const nav = document.querySelector('.nav');
+    if (nav) {
+        nav.style.position = 'static';
+        nav.style.background = 'transparent';
+        nav.style.backdropFilter = 'none';
+        nav.style.borderTop = 'none';
+    }
+}
+
+function enableVibrationFeedback() {
+    // Enable vibration feedback for phone
+    if ('vibrate' in navigator) {
+        // Add vibration to button clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('button, .nav-item, .game-item')) {
+                navigator.vibrate(50);
+            }
+        });
+    }
+}
+
+function enablePenSupport() {
+    // Enable pen/stylus support for tablet
+    document.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'pen') {
+            document.body.classList.add('pen-mode');
+        }
+    });
+    
+    document.addEventListener('pointerup', () => {
+        document.body.classList.remove('pen-mode');
+    });
+}
+
+function optimizeForMouseInteraction() {
+    // Optimize for mouse interaction on desktop
+    document.addEventListener('mouseenter', (e) => {
+        if (e.target.matches('.game-item, .nav-item')) {
+            e.target.style.transform = 'scale(1.05)';
+        }
+    });
+    
+    document.addEventListener('mouseleave', (e) => {
+        if (e.target.matches('.game-item, .nav-item')) {
+            e.target.style.transform = 'scale(1)';
+        }
+    });
+}
+
+function enableContextMenus() {
+    // Enable right-click context menus for desktop
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target.matches('.game-item')) {
+            e.preventDefault();
+            showContextMenu(e);
+        }
+    });
+}
+
+function showContextMenu(e) {
+    // Show context menu for desktop
+    const contextMenu = document.createElement('div');
+    contextMenu.className = 'context-menu';
+    contextMenu.innerHTML = `
+        <div class="context-menu-content">
+            <button onclick="restartGame()">Restart</button>
+            <button onclick="showHelp()">Help</button>
+            <button onclick="closeContextMenu()">Close</button>
+        </div>
+    `;
+    
+    contextMenu.style.position = 'fixed';
+    contextMenu.style.left = e.clientX + 'px';
+    contextMenu.style.top = e.clientY + 'px';
+    contextMenu.style.zIndex = '10000';
+    
+    document.body.appendChild(contextMenu);
+    
+    // Close on click outside
+    document.addEventListener('click', closeContextMenu, { once: true });
+}
+
+function closeContextMenu() {
+    const contextMenu = document.querySelector('.context-menu');
+    if (contextMenu) {
+        contextMenu.remove();
+    }
+}
+
+function showHelp() {
+    // Show help modal
+    const helpModal = document.createElement('div');
+    helpModal.className = 'help-modal';
+    helpModal.innerHTML = `
+        <div class="help-content">
+            <h2>How to Play</h2>
+            <div class="help-section">
+                <h3>Phone Mode</h3>
+                <p>• Swipe left/right to navigate</p>
+                <p>• Swipe up for quick menu</p>
+                <p>• Tap to interact</p>
+            </div>
+            <div class="help-section">
+                <h3>Tablet Mode</h3>
+                <p>• Pinch to zoom</p>
+                <p>• Use pen/stylus for writing</p>
+                <p>• Multi-touch gestures</p>
+            </div>
+            <div class="help-section">
+                <h3>Web Mode</h3>
+                <p>• Use keyboard shortcuts (Ctrl+1-0)</p>
+                <p>• Right-click for options</p>
+                <p>• Mouse hover effects</p>
+            </div>
+            <button onclick="closeHelp()">Got it!</button>
+        </div>
+    `;
+    
+    document.body.appendChild(helpModal);
+    
+    setTimeout(() => {
+        helpModal.classList.add('show');
+    }, 10);
+}
+
+function closeHelp() {
+    const helpModal = document.querySelector('.help-modal');
+    if (helpModal) {
+        helpModal.classList.remove('show');
+        setTimeout(() => {
+            if (helpModal.parentElement) {
+                helpModal.parentElement.removeChild(helpModal);
+            }
+        }, 300);
+    }
+}
+
+function addDeviceModeIndicator() {
+    // Add device mode indicator to the page
+    const indicator = document.createElement('div');
+    indicator.id = 'device-mode-indicator';
+    indicator.className = `device-mode-indicator ${currentDeviceMode}-mode`;
+    indicator.textContent = currentDeviceMode.toUpperCase();
+    indicator.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 10000;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    `;
+    
+    document.body.appendChild(indicator);
+    
+    // Hide indicator after 3 seconds
+    setTimeout(() => {
+        indicator.style.opacity = '0';
+        setTimeout(() => {
+            if (indicator.parentElement) {
+                indicator.parentElement.removeChild(indicator);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Welcome Overlay Logic
+function showWelcomeOverlay() {
+  document.body.classList.add('welcome-active');
+  document.getElementById('welcome-overlay').style.display = 'flex';
+  // Optional: Play greeting sound or voice
+  if ('speechSynthesis' in window) {
+    const utter = new SpeechSynthesisUtterance("Welcome to Eric's Learning Adventure! Please click Eric's picture to enter.");
+    utter.rate = 1.05;
+    utter.pitch = 1.1;
+    window.speechSynthesis.speak(utter);
+  }
+}
+
+function hideWelcomeOverlay() {
+  document.body.classList.remove('welcome-active');
+  document.getElementById('welcome-overlay').style.display = 'none';
+  localStorage.setItem('ericAppEntered', 'yes');
+}
+
+// Profile Picture Management System
+let profileImageData = null;
+
+function initializeProfilePicture() {
+    const profilePicture = document.querySelector('.profile-picture');
+    if (profilePicture) {
+        profilePicture.addEventListener('click', showProfileUploadModal);
+        
+        // Load saved profile picture from localStorage
+        loadProfilePicture();
+    }
+}
+
+function showProfileUploadModal() {
+    const modal = document.createElement('div');
+    modal.className = 'profile-upload-modal';
+    modal.innerHTML = `
+        <div class="profile-upload-content">
+            <h3>Update Eric's Profile Picture</h3>
+            <p>Choose a photo of Eric to personalize his learning adventure!</p>
+            
+            <input type="file" id="profile-upload" accept="image/*" onchange="previewProfileImage(event)">
+            <label for="profile-upload">📷 Choose Photo</label>
+            
+            <div class="profile-preview" id="profile-preview">
+                <img id="preview-image" src="" alt="Preview">
+            </div>
+            
+            <div class="upload-buttons">
+                <button onclick="saveProfilePicture()" id="save-btn" disabled>Save Picture</button>
+                <button onclick="closeProfileUploadModal()" class="cancel">Cancel</button>
+            </div>
+            
+            <div class="upload-tips">
+                <p><strong>Tips:</strong></p>
+                <ul>
+                    <li>Use a clear, front-facing photo</li>
+                    <li>Square photos work best</li>
+                    <li>Make sure Eric's face is well-lit</li>
+                    <li>Keep file size under 5MB</li>
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Animate in
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+    
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeProfileUploadModal();
+        }
+    });
+}
+
+function previewProfileImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+        showNotification('File too large! Please choose a smaller image (under 5MB).', 'error');
         return;
     }
     
-    const story = stories.spaceAdventure;
-    storybook.innerHTML = ''; // Clear previous pages
-    story.pages.forEach((page, index) => {
-        const pageElement = document.createElement('div');
-        pageElement.classList.add('story-page');
-        if (index === 0) pageElement.classList.add('active');
-        
-        pageElement.innerHTML = `
-            <div class="story-emoji">${page.image}</div>
-            <p class="story-text" id="story-text-${index}">${page.text}</p>
-        `;
-        storybook.appendChild(pageElement);
-    });
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+        showNotification('Please select an image file.', 'error');
+        return;
+    }
     
-    // Reset to first page
-    currentPage = 0;
-    updateStoryNav();
-}
-
-function updateStoryNav() {
-    const totalPages = stories.spaceAdventure.pages.length;
-    prevPageButton.disabled = currentPage === 0;
-    nextPageButton.disabled = currentPage === totalPages - 1;
-}
-
-function showPage(pageNumber) {
-    const pages = document.querySelectorAll('.story-page');
-    pages.forEach(page => page.classList.remove('active'));
-    pages[pageNumber].classList.add('active');
-    currentPage = pageNumber;
-    updateStoryNav();
-}
-
-function readCurrentPage() {
-    const pageText = stories.spaceAdventure.pages[currentPage].text;
-    const textElement = document.getElementById(`story-text-${currentPage}`);
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('preview-image');
+        const previewContainer = document.getElementById('profile-preview');
+        const saveBtn = document.getElementById('save-btn');
+        
+        preview.src = e.target.result;
+        previewContainer.classList.add('show');
+        saveBtn.disabled = false;
+        
+        // Store image data
+        profileImageData = e.target.result;
+        
+        // Play success sound
+        playSound('select');
+    };
     
-    speakText(pageText, 0.9, 1.1, (word) => {
-        // This is a new callback for highlighting words
-        if (textElement) {
-            let html = pageText;
-            const regex = new RegExp(`\\b(${word})\\b`, 'gi');
-            html = html.replace(regex, '<span class="highlight">$&</span>');
-            textElement.innerHTML = html;
-        }
-    });
+    reader.readAsDataURL(file);
 }
 
-// Event Listeners for Storybook
-if(prevPageButton) {
-    prevPageButton.addEventListener('click', () => {
-        if (currentPage > 0) {
-            showPage(currentPage - 1);
-        }
-    });
-}
-
-if(nextPageButton) {
-    nextPageButton.addEventListener('click', () => {
-        const totalPages = stories.spaceAdventure.pages.length;
-        if (currentPage < totalPages - 1) {
-            showPage(currentPage + 1);
-        }
-    });
-}
-
-if(readAloudButton) {
-    readAloudButton.addEventListener('click', readCurrentPage);
-}
-
-// A new function to handle showing and hiding sections
-function showSection(sectionId) {
-    const mainContent = document.getElementById('main-content');
-    const storyTimeSection = document.getElementById('story-time');
-
-    // If the link is for the story, show the story section and hide main content.
-    if (sectionId === 'story-time') {
-        mainContent.style.display = 'none';
-        storyTimeSection.style.display = 'block';
+function saveProfilePicture() {
+    if (!profileImageData) return;
+    
+    // Save to localStorage
+    try {
+        localStorage.setItem('ericProfilePicture', profileImageData);
         
-        // Initialize storybook with error handling
-        try {
-            initializeStorybook(); // Make sure the story is ready
-            speakText("Welcome to Eric's Story Time! Let's read a fun adventure together!");
-        } catch (error) {
-            console.error('Error initializing storybook:', error);
-            // Fallback: create a simple story display
-            const storybook = document.getElementById('storybook');
-            if (storybook) {
-                storybook.innerHTML = `
-                    <div class="story-page active">
-                        <div class="story-emoji">🚀</div>
-                        <p class="story-text">Welcome to Eric's Story Time! Let's read a fun adventure together!</p>
-                    </div>
-                `;
-            }
+        // Update the profile picture
+        const profilePic = document.getElementById('eric-profile-pic');
+        if (profilePic) {
+            profilePic.src = profileImageData;
         }
-    } 
-    // For any other link, show the main content and hide the story.
-    else {
-        mainContent.style.display = 'block';
-        storyTimeSection.style.display = 'none';
         
-        // Then, scroll to the correct anchor within the main content.
-        const targetElement = document.getElementById(sectionId);
-        if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
+        // Show success message
+        showNotification('Profile picture updated! Eric looks great! 🎉', 'success');
+        
+        // Play success sound
+        playSound('complete');
+        
+        // Close modal
+        closeProfileUploadModal();
+        
+        // Add celebration effect
+        addProfileCelebration();
+        
+    } catch (error) {
+        showNotification('Could not save profile picture. Please try again.', 'error');
+        console.error('Error saving profile picture:', error);
     }
 }
+
+function loadProfilePicture() {
+    try {
+        const savedImage = localStorage.getItem('ericProfilePicture');
+        if (savedImage) {
+            const profilePic = document.getElementById('eric-profile-pic');
+            if (profilePic) {
+                profilePic.src = savedImage;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading profile picture:', error);
+    }
+}
+
+function closeProfileUploadModal() {
+    const modal = document.querySelector('.profile-upload-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            if (modal.parentElement) {
+                modal.parentElement.removeChild(modal);
+            }
+        }, 300);
+    }
+    
+    // Reset form
+    profileImageData = null;
+    const fileInput = document.getElementById('profile-upload');
+    if (fileInput) {
+        fileInput.value = '';
+    }
+}
+
+function addProfileCelebration() {
+    // Add confetti effect
+    triggerConfetti();
+    
+    // Add profile picture celebration animation
+    const profilePic = document.querySelector('.profile-picture');
+    if (profilePic) {
+        profilePic.style.animation = 'profileCelebration 1s ease-in-out';
+        setTimeout(() => {
+            profilePic.style.animation = 'profileFloat 3s ease-in-out infinite';
+        }, 1000);
+    }
+}
+
+// Add celebration animation to CSS
+const profileStyle = document.createElement('style');
+profileStyle.textContent = `
+    @keyframes profileCelebration {
+        0% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.2) rotate(5deg); }
+        50% { transform: scale(1.1) rotate(-5deg); }
+        75% { transform: scale(1.15) rotate(3deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
+    
+    .upload-tips {
+        margin-top: 1.5rem;
+        text-align: left;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .upload-tips p {
+        margin: 0 0 0.5rem 0;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .upload-tips ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+    
+    .upload-tips li {
+        margin: 0.3rem 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .upload-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .upload-buttons button {
+        min-width: 100px;
+    }
+    
+    .upload-buttons button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .upload-buttons button:disabled:hover {
+        background: #6c757d;
+        transform: none;
+    }
+`;
+document.head.appendChild(profileStyle);
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing welcome overlay...');
+  
+  // Welcome Overlay Logic - Check first
+  if (!localStorage.getItem('ericAppEntered')) {
+    console.log('First visit, showing welcome overlay');
+    showWelcomeOverlay();
+  } else {
+    console.log('Returning user, hiding welcome overlay');
+    hideWelcomeOverlay();
+    // Show Home section by default
+    showSection('hero');
+  }
+  
+  // Add click event to welcome overlay picture
+  const welcomePic = document.querySelector('.welcome-profile-pic');
+  if (welcomePic) {
+    console.log('Adding click event to welcome picture');
+    welcomePic.addEventListener('click', function() {
+      console.log('Welcome pic clicked!');
+      hideWelcomeOverlay();
+      // Show Home section after entering
+      showSection('hero');
+    });
+  }
+  
+  // Add click event to welcome enter button
+  const enterBtn = document.querySelector('.welcome-enter-btn');
+  if (enterBtn) {
+    console.log('Adding click event to enter button');
+    enterBtn.addEventListener('click', function() {
+      console.log('Enter button clicked!');
+      hideWelcomeOverlay();
+      // Show Home section after entering
+      showSection('hero');
+    });
+  }
+  
+  // Add click event to main profile picture
+  const profilePic = document.querySelector('.profile-picture');
+  if (profilePic) {
+    console.log('Adding click event to main profile picture');
+    profilePic.addEventListener('click', function() {
+      console.log('Profile pic clicked!');
+      if (document.body.classList.contains('welcome-active')) {
+        hideWelcomeOverlay();
+        // Show Home section after entering
+        showSection('hero');
+      }
+    });
+  }
+  
+  // Initialize device mode system
+  initializeDeviceModeSystem();
+  
+  // Setup event listeners for navigation and interactions
+  setupEventListeners();
+  
+  // Initialize profile picture
+  initializeProfilePicture();
+  
+  // Initialize writing section when writing tab is clicked
+  const writingTab = document.querySelector('a[href="#writing"]');
+  if (writingTab) {
+    writingTab.addEventListener('click', () => {
+      setTimeout(() => {
+        initWritingSection();
+        updateResponsiveElements();
+      }, 100);
+    });
+  }
+  
+  // Also initialize if we're already on the writing section
+  if (window.location.hash === '#writing') {
+    setTimeout(() => {
+      initWritingSection();
+      updateResponsiveElements();
+    }, 100);
+  }
+  
+  // Initialize responsive elements on page load
+  updateResponsiveElements();
+  
+  // Add device mode indicator to the page
+  addDeviceModeIndicator();
+});
+
+// Setup mobile enhancements
+function setupMobileEnhancements() {
+    // Add touch-friendly interactions for mobile devices
+    if ('ontouchstart' in window) {
+        // Add touch feedback to interactive elements
+        document.querySelectorAll('.game-card, .nav-link, .character, .baby').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            element.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    }
+}
+
+// Setup mobile play area
+function setupMobilePlayArea() {
+    const playArea = document.getElementById("play-area");
+    if (playArea) {
+        // Add touch events for mobile bubble creation
+        playArea.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            createBubble(touch.clientX, touch.clientY);
+        });
+        
+        // Also keep mouse events for desktop
+        playArea.addEventListener('click', function(e) {
+            createBubble(e.clientX, e.clientY);
+        });
+    }
+}
+
+// Show section function for navigation
+function showSection(sectionId) {
+    console.log('Showing section:', sectionId);
+    
+    // Hide all sections first
+    const allSections = document.querySelectorAll('section, .hero, .games, .learning, .writing, .play-area, .achievements, .story-time-section');
+    allSections.forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show the requested section
+    const targetSection = document.getElementById(sectionId) || document.querySelector(`.${sectionId}`);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // Update active navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        const activeLink = document.querySelector(`[href="#${sectionId}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+        
+        // Special handling for writing section
+        if (sectionId === 'writing') {
+            setTimeout(() => {
+                initWritingSection();
+                updateResponsiveElements();
+            }, 100);
+        }
+        
+        // Play sound and show notification
+        playSound('click');
+        speakText(`Welcome to ${sectionId}!`);
+        
+    } else {
+        console.error('Section not found:', sectionId);
+        // Fallback to home section
+        showSection('hero');
+    }
+}
+
+// Setup event listeners

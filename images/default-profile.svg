@@ -1,0 +1,33 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="60" fill="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"/>
+  
+  <!-- Face -->
+  <circle cx="60" cy="55" r="25" fill="#FFE4B5"/>
+  
+  <!-- Eyes -->
+  <circle cx="52" cy="50" r="4" fill="#333"/>
+  <circle cx="68" cy="50" r="4" fill="#333"/>
+  
+  <!-- Eye highlights -->
+  <circle cx="54" cy="48" r="1.5" fill="white"/>
+  <circle cx="70" cy="48" r="1.5" fill="white"/>
+  
+  <!-- Smile -->
+  <path d="M 45 60 Q 60 70 75 60" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Hair -->
+  <path d="M 35 35 Q 60 25 85 35 Q 80 45 75 40 Q 60 30 45 40 Q 40 45 35 35" fill="#8B4513"/>
+  
+  <!-- Body -->
+  <rect x="45" y="80" width="30" height="25" rx="15" fill="#4A90E2"/>
+  
+  <!-- Arms -->
+  <rect x="35" y="85" width="8" height="15" rx="4" fill="#4A90E2"/>
+  <rect x="77" y="85" width="8" height="15" rx="4" fill="#4A90E2"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="30" cy="30" r="3" fill="#FFD700" opacity="0.8"/>
+  <circle cx="90" cy="30" r="3" fill="#FFD700" opacity="0.8"/>
+  <circle cx="60" cy="20" r="2" fill="#FFD700" opacity="0.6"/>
+</svg> 

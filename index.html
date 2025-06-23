@@ -23,13 +23,9 @@
     <meta property="twitter:image" content="/images/hero-bg.svg">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 
-    <title>Eric's Learning Adventure - Fun Educational Games for Eric Uyiosa</title>
+    <title>Eric's Learning Adventure</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -40,10 +36,21 @@
     
     <!-- Security headers -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 </head>
 <body>
+    <div id="welcome-overlay" class="welcome-overlay">
+        <div class="welcome-content">
+            <h1>Welcome to Eric's Learning Adventure!</h1>
+            <p>Click Eric's picture or the Enter button to start</p>
+            <div class="welcome-profile-pic">
+                <img src="images/eric.jpeg" alt="Eric" class="welcome-pic">
+            </div>
+            <button class="welcome-enter-btn">Enter Application</button>
+            <div class="welcome-arrow">⬇️</div>
+        </div>
+    </div>
+
     <!-- Animated Background Elements -->
     <div class="floating-elements">
         <div class="floating-star">⭐</div>
@@ -60,51 +67,212 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <span class="logo-icon">👶</span>
+                <span class="logo-icon">🌟</span>
                 <span class="logo-text">Eric's Learning Adventure</span>
             </div>
             <div class="nav-links">
-                <a href="#hero" class="nav-link active">🏠 Home</a>
-                <a href="#games" class="nav-link">🎮 Games</a>
-                <a href="#learning" class="nav-link">📚 Learning</a>
-                <a href="#writing" class="nav-link">✍️ Writing</a>
-                <a href="#play" class="nav-link">🎨 Play</a>
-                <a href="#achievements" class="nav-link">🏆 Achievements</a>
+                <a href="#hero" class="nav-link">Home</a>
+                <a href="#games" class="nav-link">Games</a>
+                <a href="#learning" class="nav-link">Learning</a>
+                <a href="#writing" class="nav-link">Writing</a>
+                <a href="#play" class="nav-link">Play</a>
+                <a href="#achievements" class="nav-link">Achievements</a>
                 <a href="#story-time" class="nav-link">Story Time</a>
             </div>
+            <div class="nav-score">
+                <span class="score-icon">⭐</span>
+                <span class="score-text" id="score">0</span>
+            </div>
             <div class="nav-controls">
-                <div class="nav-score">
-                    <span class="score-icon">⭐</span>
-                    <span class="score-text">Score: <span id="score">0</span></span>
-                </div>
-                <button class="confetti-button" onclick="triggerConfetti()" title="Celebrate!">
+                <button class="music-control" onclick="toggleMusic()" title="Toggle Music">
+                    <i class="fas fa-music"></i>
+                </button>
+                <button class="confetti-button" onclick="createConfetti()" title="Celebrate!">
                     🎉
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Story Time Section (now outside main-content) -->
-    <section id="story-time" class="story-time-section" style="display:none;">
-        <div class="container">
-            <h2 class="section-title">Eric's Story Time 📖</h2>
-            <p class="section-subtitle">Let's go on an adventure! Click the arrows to turn the page.</p>
+    <!-- Skip to Content Link for Screen Readers -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Story Time Section -->
+    <section id="story-time" class="story-time-section">
+        <div class="storybook-container">
+            <div class="storybook-header">
+                <h2 class="storybook-title">
+                    <span class="title-icon">📖</span>
+                    Eric's Story Time
+                    <span class="title-icon">📖</span>
+                </h2>
+                <p class="storybook-subtitle">Adventure stories just for you, Eric!</p>
+            </div>
             
-            <div id="storybook-container" class="storybook-container">
-                <div id="storybook" class="storybook">
-                    <!-- Story pages will be injected here by JavaScript -->
+            <div class="storybook">
+                <div class="story-page active" id="story-page-1">
+                    <div class="story-emoji">🚀</div>
+                    <div class="story-text">
+                        Once upon a time, there was a brave little boy named Eric who loved to explore the stars. 
+                        One night, he found a magical rocket in his backyard!
+                    </div>
                 </div>
-                <div class="storybook-nav">
-                    <button id="prev-page" class="nav-arrow" title="Previous Page">◀</button>
-                    <button id="read-aloud" class="read-aloud-button" title="Read Page Aloud">🔊 Read Page</button>
-                    <button id="next-page" class="nav-arrow" title="Next Page">▶</button>
+                
+                <div class="story-page" id="story-page-2">
+                    <div class="story-emoji">🌙</div>
+                    <div class="story-text">
+                        The rocket was glowing with beautiful colors. Eric climbed inside and pressed a big red button. 
+                        "3, 2, 1... Blast off!" The rocket zoomed into the night sky!
+                    </div>
+                </div>
+                
+                <div class="story-page" id="story-page-3">
+                    <div class="story-emoji">⭐</div>
+                    <div class="story-text">
+                        Eric flew past the moon and stars. He saw planets with rings, and comets with long tails. 
+                        Everything was so beautiful and sparkly!
+                    </div>
+                </div>
+                
+                <div class="story-page" id="story-page-4">
+                    <div class="story-emoji">👽</div>
+                    <div class="story-text">
+                        Suddenly, Eric met friendly space aliens! They had green skin and big eyes. 
+                        "Hello, Earth friend!" they said. Eric was so excited to make new friends!
+                    </div>
+                </div>
+                
+                <div class="story-page" id="story-page-5">
+                    <div class="story-emoji">🎉</div>
+                    <div class="story-text">
+                        The aliens showed Eric their space home and gave him space cookies. 
+                        They played games and danced together. It was the best adventure ever!
+                    </div>
+                </div>
+                
+                <div class="story-page" id="story-page-6">
+                    <div class="story-emoji">🏠</div>
+                    <div class="story-text">
+                        When it was time to go home, the aliens gave Eric a special space rock as a souvenir. 
+                        "Come visit us again!" they said. Eric promised he would!
+                    </div>
+                </div>
+                
+                <div class="story-page" id="story-page-7">
+                    <div class="story-emoji">💫</div>
+                    <div class="story-text">
+                        Back on Earth, Eric told his family all about his space adventure. 
+                        They couldn't believe it! But Eric knew it was real because he had his space rock.
+                    </div>
+                </div>
+                
+                <div class="story-page" id="story-page-8">
+                    <div class="story-emoji">🌙</div>
+                    <div class="story-text">
+                        Every night, Eric looks up at the stars and waves to his alien friends. 
+                        He dreams of more adventures in space. The end!
+                    </div>
+                </div>
+                
+                <div class="story-navigation">
+                    <button class="nav-arrow" onclick="previousStoryPage()" id="prev-arrow" disabled>
+                        <span class="nav-icon">⬅️</span>
+                    </button>
+                    <button class="read-aloud-button" onclick="readStoryAloud()" id="read-aloud-btn">
+                        <span class="button-icon">🔊</span>
+                        Read Aloud
+                    </button>
+                    <button class="nav-arrow" onclick="nextStoryPage()" id="next-arrow">
+                        <span class="nav-icon">➡️</span>
+                    </button>
+                </div>
+                
+                <div class="story-progress">
+                    <div class="progress-dot active" onclick="goToStoryPage(1)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(2)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(3)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(4)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(5)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(6)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(7)"></div>
+                    <div class="progress-dot" onclick="goToStoryPage(8)"></div>
+                </div>
+                
+                <div class="story-controls">
+                    <button class="story-control-button" onclick="restartStory()">
+                        <span class="button-icon">🔄</span>
+                        Start Over
+                    </button>
+                    <button class="story-control-button" onclick="toggleStoryMusic()" id="music-toggle">
+                        <span class="button-icon">🎵</span>
+                        Music
+                    </button>
+                    <button class="story-control-button" onclick="toggleStoryEffects()" id="effects-toggle">
+                        <span class="button-icon">✨</span>
+                        Effects
+                    </button>
+                </div>
+            </div>
+            
+            <div class="story-features">
+                <div class="story-feature">
+                    <div class="feature-icon">🎭</div>
+                    <h3 class="feature-title">Interactive Storytelling</h3>
+                    <p class="feature-description">Click through pages and enjoy beautiful animations</p>
+                </div>
+                <div class="story-feature">
+                    <div class="feature-icon">🔊</div>
+                    <h3 class="feature-title">Read Aloud</h3>
+                    <p class="feature-description">Listen to the story being read with clear pronunciation</p>
+                </div>
+                <div class="story-feature">
+                    <div class="feature-icon">🎵</div>
+                    <h3 class="feature-title">Background Music</h3>
+                    <p class="feature-description">Enjoy calming music while reading</p>
+                </div>
+                <div class="story-feature">
+                    <div class="feature-icon">✨</div>
+                    <h3 class="feature-title">Special Effects</h3>
+                    <p class="feature-description">Magical animations and visual effects</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main content of the page -->
-    <div id="main-content">
+    <!-- Main Content -->
+    <main id="main-content">
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="profile-section">
+                        <div class="profile-picture" title="Click to change Eric's photo">
+                            <img src="images/eric.jpeg" alt="Eric Uyiosa" id="eric-profile-pic" onerror="this.src='images/default-profile.svg'">
+                            <div class="profile-status">
+                                <span class="status-dot"></span>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h1>Eric's Learning Adventure</h1>
+                            <p class="subtitle">Welcome back, Eric! 🌟</p>
+                            <div class="profile-details">
+                                <span class="age">Age: 5 years old</span>
+                                <span class="level">Level: Learning Explorer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-controls">
+                        <div class="score-display">
+                            <span class="score-label">Score:</span>
+                            <span class="score-value" id="score">0</span>
+                        </div>
+                        <button class="music-toggle" id="musicToggle" title="Toggle Music">
+                            <span class="music-icon">🎵</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
         <section id="hero" class="hero-section">
             <div class="container">
                 <div class="hero-background">
@@ -530,7 +698,7 @@
                 </div>
             </div>
         </section>
-    </div>
+    </main>
 
     <!-- Game Modal -->
     <div id="game-modal" class="modal">
