@@ -1,0 +1,75 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="playGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="bubbleGradient1" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="bubbleGradient2" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#4ecdc4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#4ecdc4;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="bubbleGradient3" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#45b7d1;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#45b7d1;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="bubbleGradient4" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#96ceb4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#96ceb4;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="bubbleGradient5" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#fdcb6e;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#fdcb6e;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="bubbleGradient6" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#e17055;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#e17055;stop-opacity:0.3" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#playGradient)"/>
+  
+  <!-- Bubbles -->
+  <circle cx="100" cy="100" r="30" fill="url(#bubbleGradient1)"/>
+  <circle cx="200" cy="80" r="25" fill="url(#bubbleGradient2)"/>
+  <circle cx="300" cy="120" r="35" fill="url(#bubbleGradient3)"/>
+  <circle cx="400" cy="90" r="20" fill="url(#bubbleGradient4)"/>
+  <circle cx="500" cy="110" r="28" fill="url(#bubbleGradient5)"/>
+  <circle cx="150" cy="200" r="22" fill="url(#bubbleGradient6)"/>
+  <circle cx="250" cy="180" r="32" fill="url(#bubbleGradient1)"/>
+  <circle cx="350" cy="220" r="18" fill="url(#bubbleGradient2)"/>
+  <circle cx="450" cy="190" r="26" fill="url(#bubbleGradient3)"/>
+  <circle cx="550" cy="210" r="24" fill="url(#bubbleGradient4)"/>
+  <circle cx="120" cy="300" r="29" fill="url(#bubbleGradient5)"/>
+  <circle cx="220" cy="280" r="21" fill="url(#bubbleGradient6)"/>
+  <circle cx="320" cy="320" r="27" fill="url(#bubbleGradient1)"/>
+  <circle cx="420" cy="290" r="23" fill="url(#bubbleGradient2)"/>
+  <circle cx="520" cy="310" r="31" fill="url(#bubbleGradient3)"/>
+  
+  <!-- Bubble highlights -->
+  <circle cx="95" cy="95" r="8" fill="white" opacity="0.6"/>
+  <circle cx="195" cy="75" r="6" fill="white" opacity="0.6"/>
+  <circle cx="295" cy="115" r="9" fill="white" opacity="0.6"/>
+  <circle cx="395" cy="85" r="5" fill="white" opacity="0.6"/>
+  <circle cx="495" cy="105" r="7" fill="white" opacity="0.6"/>
+  
+  <!-- Floating elements -->
+  <polygon points="50,50 55,65 70,65 60,75 65,90 50,80 35,90 40,75 30,65 45,65" fill="#ffd700" opacity="0.7"/>
+  <polygon points="550,50 555,65 570,65 560,75 565,90 550,80 535,90 540,75 530,65 545,65" fill="#ffd700" opacity="0.7"/>
+  <polygon points="300,30 305,45 320,45 310,55 315,70 300,60 285,70 290,55 280,45 295,45" fill="#ffd700" opacity="0.7"/>
+  
+  <!-- Hearts -->
+  <path d="M 80 350 Q 80 330 100 330 Q 120 330 120 350 Q 120 370 100 390 Q 80 370 80 350" fill="#ff6b9d" opacity="0.6"/>
+  <path d="M 480 350 Q 480 330 500 330 Q 520 330 520 350 Q 520 370 500 390 Q 480 370 480 350" fill="#ff6b9d" opacity="0.6"/>
+  
+  <!-- Sparkles -->
+  <circle cx="150" cy="60" r="2" fill="#ffd700"/>
+  <circle cx="450" cy="70" r="2" fill="#ffd700"/>
+  <circle cx="300" cy="350" r="2" fill="#ffd700"/>
+  <circle cx="100" cy="250" r="2" fill="#ffd700"/>
+  <circle cx="500" cy="250" r="2" fill="#ffd700"/>
+</svg> 

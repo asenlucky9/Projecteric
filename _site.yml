@@ -1,0 +1,30 @@
+name: "Eric's Learning Adventure"
+description: "A fun and interactive learning application designed specifically for Eric Uyiosa, a 5-year-old child. Learn ABCs, numbers, colors, shapes, animals, and words with engaging games and activities."
+keywords: "learning, education, children, games, interactive, alphabet, numbers, colors, shapes, animals, words, Eric Uyiosa"
+author: "KING LUCA"
+url: "https://erics-learning-adventure.netlify.app"
+image: "/images/hero-bg.svg"
+favicon: "/images/favicon.ico"
+
+social:
+  twitter:
+    card: "summary_large_image"
+    site: "@ericslearning"
+    creator: "@kingluca"
+  facebook:
+    app_id: ""
+    type: "website"
+
+analytics:
+  google: ""
+  facebook: ""
+
+features:
+  - "Interactive Learning Games"
+  - "Female Voice Guidance"
+  - "Baby Sounds and Music"
+  - "Achievement System"
+  - "Progress Tracking"
+  - "Fun Activities"
+  - "Responsive Design"
+  - "Child-Friendly Interface" 

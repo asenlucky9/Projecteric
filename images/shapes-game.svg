@@ -1,0 +1,45 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shapesGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fd79a8;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#fdcb6e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e17055;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#00b894;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00cec9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="150" cy="150" r="140" fill="url(#shapesGradient)"/>
+  
+  <!-- Shapes -->
+  <!-- Circle -->
+  <circle cx="100" cy="100" r="25" fill="#fd79a8" stroke="white" stroke-width="3"/>
+  
+  <!-- Square -->
+  <rect x="175" y="75" width="50" height="50" fill="#fdcb6e" stroke="white" stroke-width="3"/>
+  
+  <!-- Triangle -->
+  <polygon points="100,200 125,150 150,200" fill="#e17055" stroke="white" stroke-width="3"/>
+  
+  <!-- Star -->
+  <polygon points="200,180 210,200 230,200 215,215 220,235 200,225 180,235 185,215 170,200 190,200" fill="#00b894" stroke="white" stroke-width="2"/>
+  
+  <!-- Heart -->
+  <path d="M 150 220 Q 150 200 170 200 Q 190 200 190 220 Q 190 240 170 260 Q 150 240 150 220" fill="#00cec9" stroke="white" stroke-width="2"/>
+  
+  <!-- Diamond -->
+  <polygon points="150,120 170,140 150,160 130,140" fill="#ff6b6b" stroke="white" stroke-width="2"/>
+  
+  <!-- Shape labels -->
+  <text x="100" y="140" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Circle</text>
+  <text x="200" y="110" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Square</text>
+  <text x="125" y="210" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Triangle</text>
+  <text x="200" y="250" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Star</text>
+  
+  <!-- Small decorative elements -->
+  <circle cx="50" cy="50" r="8" fill="#ff6b6b" opacity="0.7"/>
+  <circle cx="250" cy="50" r="8" fill="#4ecdc4" opacity="0.7"/>
+  <circle cx="50" cy="250" r="8" fill="#96ceb4" opacity="0.7"/>
+  <circle cx="250" cy="250" r="8" fill="#fdcb6e" opacity="0.7"/>
+</svg> 

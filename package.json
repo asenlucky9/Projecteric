@@ -1,0 +1,47 @@
+{
+  "name": "erics-learning-adventure",
+  "version": "1.0.0",
+  "description": "A fun and interactive learning application designed specifically for Eric Uyiosa, a 5-year-old child",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve . -p 3000",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "echo 'Deploy to Netlify'"
+  },
+  "keywords": [
+    "learning",
+    "education",
+    "children",
+    "games",
+    "interactive",
+    "alphabet",
+    "numbers",
+    "colors",
+    "shapes",
+    "animals",
+    "words",
+    "Eric Uyiosa"
+  ],
+  "author": "KING LUCA",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kingluca/erics-learning-adventure.git"
+  },
+  "homepage": "https://erics-learning-adventure.netlify.app",
+  "bugs": {
+    "url": "https://github.com/kingluca/erics-learning-adventure/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+} 

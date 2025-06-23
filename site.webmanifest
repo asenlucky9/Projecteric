@@ -1,0 +1,30 @@
+{
+  "name": "Eric's Learning Adventure",
+  "short_name": "Eric's Learning",
+  "description": "A fun and interactive learning application for Eric Uyiosa",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#ff6b9d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "games", "kids"],
+  "lang": "en",
+  "dir": "ltr"
+} 

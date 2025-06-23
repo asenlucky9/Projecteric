@@ -1,0 +1,44 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="alphabetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#74b9ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#fd79a8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fdcb6e;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="letterGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="150" cy="150" r="140" fill="url(#alphabetGradient)"/>
+  
+  <!-- Letters in a circle -->
+  <g transform="translate(150,150)">
+    <!-- A -->
+    <circle cx="-80" cy="-80" r="25" fill="url(#letterGradient)" stroke="#74b9ff" stroke-width="3"/>
+    <text x="-80" y="-75" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#74b9ff" text-anchor="middle">A</text>
+    
+    <!-- B -->
+    <circle cx="80" cy="-80" r="25" fill="url(#letterGradient)" stroke="#fd79a8" stroke-width="3"/>
+    <text x="80" y="-75" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fd79a8" text-anchor="middle">B</text>
+    
+    <!-- C -->
+    <circle cx="-80" cy="80" r="25" fill="url(#letterGradient)" stroke="#fdcb6e" stroke-width="3"/>
+    <text x="-80" y="85" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fdcb6e" text-anchor="middle">C</text>
+    
+    <!-- D -->
+    <circle cx="80" cy="80" r="25" fill="url(#letterGradient)" stroke="#55a3ff" stroke-width="3"/>
+    <text x="80" y="85" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#55a3ff" text-anchor="middle">D</text>
+  </g>
+  
+  <!-- Center star -->
+  <polygon points="150,120 160,140 180,140 165,155 170,175 150,165 130,175 135,155 120,140 140,140" fill="#ffd700"/>
+  
+  <!-- Small decorative elements -->
+  <circle cx="50" cy="50" r="8" fill="#ff6b6b" opacity="0.7"/>
+  <circle cx="250" cy="50" r="8" fill="#4ecdc4" opacity="0.7"/>
+  <circle cx="50" cy="250" r="8" fill="#96ceb4" opacity="0.7"/>
+  <circle cx="250" cy="250" r="8" fill="#fdcb6e" opacity="0.7"/>
+</svg> 
